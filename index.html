@@ -1064,7 +1064,7 @@ footer {
 <header id="main-header">
   <div class="header-inner">
     <div class="logo" onclick="navigate('home',event)" style="cursor:pointer">
-      <img src="images/qiyu-logo.png.png" alt="QIYU Travel Logo" class="logo-img" onerror="this.style.display='none'">
+      <img src="https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/qiyu-logo.png.png" alt="QIYU Travel Logo" class="logo-img" onerror="this.style.display='none'">
       <div><span>QIYU</span> CHINA TRAVEL</div>
     </div>
     <nav class="main-nav">
@@ -1245,7 +1245,7 @@ footer {
       <div class="footer-grid">
         <div class="footer-brand">
           <div class="logo">
-            <img src="images/qiyu-logo.png.png"  alt="QIYU Travel Logo" class="logo-img" onerror="this.style.display='none'">
+            <img src="https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/qiyu-logo.png.png"  alt="QIYU Travel Logo" class="logo-img" onerror="this.style.display='none'">
             <div><span>QIYU</span> CHINA TRAVEL</div>
           </div>
           <p>Your gateway to authentic China. We craft bespoke luxury journeys for discerning travelers from Europe, North America, and beyond.</p>
@@ -1398,7 +1398,7 @@ footer {
   <div class="admin-login" id="admin-login">
     <div class="login-card">
         <div class="logo" style="justify-content:center;margin-bottom:8px">
-            <img src="images/qiyu-logo.png.png" alt="QIYU Logo" class="logo-img" onerror="this.style.display='none'">
+            <img src="https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/qiyu-logo.png.png" alt="QIYU Logo" class="logo-img" onerror="this.style.display='none'">
             <div><span>QIYU</span> CHINA TRAVEL</div>
         </div>
         <p>Admin Panel --- Secure Access</p>
@@ -1606,7 +1606,19 @@ footer {
             </div>
             <button class="add-btn" onclick="saveLogoImage()" style="margin-top: 8px;">💾 保存 Logo</button>
         </div>
-        
+
+        <!-- ========== 新增：Logo 链接控件 ========== -->
+<div class="form-group">
+    <label>Logo 图片链接（URL）</label>
+    <input type="text" id="logo-url" placeholder="https://... 或 /images/logo.png" style="width: 100%;">
+    <button class="add-btn" onclick="previewLogoUrl()" style="margin-top: 4px;">🔍 预览</button>
+    <button class="add-btn" onclick="saveLogoUrl()" style="margin-top: 4px;">💾 保存链接</button>
+    <div id="logo-url-preview" style="margin-top: 8px;">
+        <img id="logo-url-preview-img" style="max-width: 150px; max-height: 80px; border-radius: 4px; display: none;">
+    </div>
+</div>
+<!-- ========== 新增结束 ========== -->
+
         <div class="form-group">
             <label>首页背景图 (Hero 区域)</label>
             <input type="file" id="hero-bg-upload" accept="image/jpeg,image/png">
@@ -1616,6 +1628,17 @@ footer {
             <button class="add-btn" onclick="saveHeroBgImage()" style="margin-top: 8px;">💾 保存背景图</button>
         </div>
         <!-- ========== 新增结束 ========== -->
+        <!-- ========== 新增：背景图链接控件 ========== -->
+<div class="form-group">
+    <label>首页背景图链接（URL）</label>
+    <input type="text" id="hero-bg-url" placeholder="https://... 或 /images/bg.jpg" style="width: 100%;">
+    <button class="add-btn" onclick="previewHeroBgUrl()" style="margin-top: 4px;">🔍 预览</button>
+    <button class="add-btn" onclick="saveHeroBgUrl()" style="margin-top: 4px;">💾 保存链接</button>
+    <div id="hero-bg-url-preview" style="margin-top: 8px;">
+        <img id="hero-bg-url-preview-img" style="max-width: 100%; max-height: 200px; border-radius: 8px; object-fit: cover; display: none;">
+    </div>
+</div>
+<!-- ========== 新增结束 ========== -->
 
         <hr style="margin: 20px 0; border-color: var(--gray-100);">
         <h3 style="margin-bottom:20px;font-size:1.1rem">Login Settings</h3>
@@ -2598,61 +2621,61 @@ loadReviewsFromStorage();
 const DATA = {
   tours: [
     { id: 1, name: "Imperial Beijing & Great Wall", days: 5, price: 2800, status: "active",
-      img: "images/changcheng1.png",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/changcheng1.png",
       highlights: ["Forbidden City private tour", "Great Wall sunrise hike", "Hutong cultural immersion", "Temple of Heaven ceremony"],
       desc: "Immerse yourself in 5,000 years of Chinese imperial history. From the grandeur of the Forbidden City to the majesty of the Great Wall at dawn, this journey reveals Beijing's soul." },
     { id: 2, name: "Shanghai to Suzhou: Modern Meets Ancient", days: 4, price: 2200, status: "active",
-      img: "images/shanghai-waitan.png",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/shanghai-waitan.png",
       highlights: ["The Bund evening walk", "Yu Garden exploration", "Suzhou classical gardens", "Silk factory visit"],
       desc: "Experience the dazzling contrast of futuristic Shanghai and timeless Suzhou, the Venice of the East, with its UNESCO-listed classical gardens." },
     { id: 3, name: "Guilin & Yangshuo Natural Wonders", days: 6, price: 3100, status: "active",
-      img: "images/guilin.png",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/guilin.png",
       highlights: ["Li River cruise", "Karst landscape photography", "Rural village cycling", "Reed Flute Cave"],
       desc: "Cruise through the otherworldly karst landscape of the Li River, cycle through rice paddies, and discover the rural charm of Yangshuo." },
     { id: 4, name: "Silk Road Adventure: Xi'an to Dunhuang", days: 8, price: 4500, status: "active",
-      img: "images/xian-gulou.png",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/xian-gulou.png",
       highlights: ["Terracotta Warriors private tour", "Mogao Caves Buddhist art", "Desert landscapes & dunes", "Ancient trade route history"],
       desc: "Follow the ancient Silk Road from the Terracotta Warriors of Xi'an to the magnificent Mogao Caves and golden dunes of Dunhuang." },
     { id: 5, name: "Yangtze River Luxury Cruise", days: 7, price: 3800, status: "active",
-      img: "images/yangtze-river-cruise.png",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/yangtze-river-cruise.png",
       highlights: ["Three Gorges scenic cruise", "Shore excursions & temples", "Onboard cultural performances", "Exclusive deck dining"],
       desc: "Sail through the dramatic Three Gorges aboard a luxury vessel, experiencing China's most spectacular river scenery with expert commentary." },
     { id: 6, name: "Yunnan Cultural Odyssey", days: 9, price: 4200, status: "active",
-      img: "images/lijiang-ancienttown.png",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/lijiang.png",
       highlights: ["Lijiang Old Town UNESCO site", "Tiger Leaping Gorge trek", "Shangri-La Tibetan culture", "Ethnic minority village visits"],
       desc: "Journey through China's most diverse province, from the ancient Naxi culture of Lijiang to the Tibetan monasteries of Shangri-La." }
   ],
   destinations: [
     { id: 1, name: "Beijing", tagline: "The Imperial Capital",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/tiantan3.png",
       attractions: ["Forbidden City", "Great Wall", "Temple of Heaven", "Summer Palace"] },
     { id: 2, name: "Shanghai", tagline: "Where East Meets West",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/shanghai-waitan.png",
       attractions: ["The Bund", "Yu Garden", "French Concession", "Pudong Skyline"] },
     { id: 3, name: "Xi'an", tagline: "Ancient Silk Road Gateway",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/xian-guchengqiang2.png",
       attractions: ["Terracotta Warriors", "City Wall", "Muslim Quarter", "Big Wild Goose Pagoda"] },
     { id: 4, name: "Guilin/Yangshuo", tagline: "Nature's Masterpiece",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/guilin-xiangbishan.png",
       attractions: ["Li River Cruise", "Karst Mountains", "Moon Hill", "Rural Villages"] },
     { id: 5, name: "Chengdu", tagline: "Land of Pandas",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/chengdu.png",
       attractions: ["Giant Panda Base", "Leshan Buddha", "Sichuan Cuisine", "Tea Culture"] },
     { id: 6, name: "Suzhou", tagline: "Venice of the East",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/suzhou.png",
       attractions: ["Classical Gardens", "Silk Workshops", "Pingjiang Road", "Water Towns"] },
     { id: 7, name: "Lijiang/Shangri-La", tagline: "Yunnan Highlands",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/lijiang.png",
       attractions: ["Old Town UNESCO", "Jade Dragon Snow Mountain", "Tibetan Monasteries", "Ethnic Villages"] },
     { id: 8, name: "Zhangjiajie", tagline: "Avatar Mountains",
-      img: "",
+      imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/zhangjiajie-bailongtianti.png",
       attractions: ["Glass Bridge", "Sandstone Pillars", "Tianmen Mountain", "National Park"] }
   ],
   
   // 替换原来的 DATA.cities
 cities: [
   { id:1, name:"Beijing", province:"Beijing Municipality", tagline:"The Imperial Capital", days:3, status:"active",
-    imageUrl:"",
+     imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/tiantan3.png",
     attractionsList:["Forbidden City","Great Wall","Temple of Heaven","Summer Palace"],
     descriptionRich:"" ,descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2662,7 +2685,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
     },
   { id:2, name:"Shanghai", province:"Shanghai Municipality", tagline:"Where East Meets West", days:3, status:"active",
-    imageUrl:"",
+    imageUrl: "https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/shanghai-waitan.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2672,7 +2695,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:3, name:"Xi'an", province:"Shaanxi", tagline:"Ancient Silk Road Gateway", days:2, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/xian-guchengqiang2.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2682,7 +2705,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:4, name:"Guilin", province:"Guangxi", tagline:"Nature's Masterpiece", days:3, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/guilin-xiangbishan.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2692,7 +2715,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:5, name:"Chengdu", province:"Sichuan", tagline:"Land of Pandas", days:2, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/chengdu-xiongmao.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2702,7 +2725,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:6, name:"Suzhou", province:"Jiangsu", tagline:"Venice of the East", days:2, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/suzhou1.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2712,7 +2735,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:7, name:"Hangzhou", province:"Zhejiang", tagline:"Paradise on Earth", days:2, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/hangzhou1.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2722,7 +2745,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:8, name:"Lijiang", province:"Yunnan", tagline:"Yunnan Highlands", days:3, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/lijiang.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2732,7 +2755,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:9, name:"Kunming", province:"Yunnan", tagline:"Spring City", days:2, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/kunming-shilin.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -2742,7 +2765,7 @@ cities: [
       guideIds: [1]                  // 对应 guides 的 id
      },
     { id:10, name:"Zhangjiajie", province:"Hunan", tagline:"Avatar Mountains", days:3, status:"active", 
-    imageUrl:"",
+    imageUrl:"https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/zhangjiajie.png",
     attractionsList:["The Bund","Yu Garden","French Concession","Pudong Skyline"],
     descriptionRich:"",
       attractionIds: [1,2,3,4],      // 对应 attractions 的 id
@@ -3278,7 +3301,7 @@ function renderTours(limit = null) {
     grid.innerHTML = toursToShow.map(t => `
         <div class="tour-card" style="cursor: pointer;" onclick="navigate('tour-detail', event, ${t.id})">
             <div class="tour-img">
-                <img src="${t.img}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
+                <img src="${t.imageUrl}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
                 <div class="tour-duration">${t.days} Days</div>
                 <div class="tour-price">From $${t.price.toLocaleString()}</div>
             </div>
@@ -3519,7 +3542,7 @@ function renderAllTours() {
     grid.innerHTML = DATA.tours.map(t => `
         <div class="tour-card" style="cursor: pointer;" onclick="navigate('tour-detail', event, ${t.id})">
             <div class="tour-img">
-                <img src="${t.img}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
+                <img src="${t.imageUrl}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
                 <div class="tour-duration">${t.days} Days</div>
                 <div class="tour-price">From $${t.price.toLocaleString()}</div>
             </div>
@@ -4205,28 +4228,144 @@ function saveHeroBgImage() {
     });
 }
 
+// ========== Logo 链接管理 ==========
+function previewLogoUrl() {
+    const url = document.getElementById('logo-url').value.trim();
+    const previewImg = document.getElementById('logo-url-preview-img');
+    if (url) {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+        previewImg.onerror = () => {
+            previewImg.style.display = 'none';
+            showToast('图片链接无效，无法预览', 'error');
+        };
+    } else {
+        previewImg.style.display = 'none';
+        showToast('请输入图片链接', 'info');
+    }
+}
+
+function saveLogoUrl() {
+    const url = document.getElementById('logo-url').value.trim();
+    if (!url) {
+        showToast('请先输入图片链接', 'error');
+        return;
+    }
+    // 保存链接到 localStorage
+    localStorage.setItem('qiyu_logo_url', url);
+    // 立即应用到页面
+    const logoImgs = document.querySelectorAll('.logo-img');
+    logoImgs.forEach(img => {
+        img.src = url;
+    });
+    // 更新后台预览
+    const previewImg = document.getElementById('logo-url-preview-img');
+    if (previewImg) {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+    }
+    showToast('Logo 链接已保存', 'success');
+}
+
+// ========== 首页背景图链接管理 ==========
+function previewHeroBgUrl() {
+    const url = document.getElementById('hero-bg-url').value.trim();
+    const previewImg = document.getElementById('hero-bg-url-preview-img');
+    if (url) {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+        previewImg.onerror = () => {
+            previewImg.style.display = 'none';
+            showToast('图片链接无效，无法预览', 'error');
+        };
+    } else {
+        previewImg.style.display = 'none';
+        showToast('请输入图片链接', 'info');
+    }
+}
+
+function saveHeroBgUrl() {
+    const url = document.getElementById('hero-bg-url').value.trim();
+    if (!url) {
+        showToast('请先输入图片链接', 'error');
+        return;
+    }
+    localStorage.setItem('qiyu_hero_bg_url', url);
+    // 应用到背景图
+    const heroBgDiv = document.querySelector('.hero-bg');
+    if (heroBgDiv) {
+        heroBgDiv.style.backgroundImage = `url(${url})`;
+        heroBgDiv.style.backgroundSize = 'cover';
+        heroBgDiv.style.backgroundRepeat = 'no-repeat';
+        heroBgDiv.style.backgroundPosition = 'center center';
+    }
+    // 更新预览
+    const previewImg = document.getElementById('hero-bg-url-preview-img');
+    if (previewImg) {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+    }
+    showToast('背景图链接已保存', 'success');
+}
+
 // 页面加载时读取已保存的 Logo 和背景图
 function loadSiteImages() {
-    const savedLogo = localStorage.getItem('qiyu_logo');
-    if (savedLogo) {
+    // Logo 加载：优先使用链接，否则使用上传的 base64
+    const logoUrl = localStorage.getItem('qiyu_logo_url');
+    if (logoUrl) {
         const logoImgs = document.querySelectorAll('.logo-img');
         logoImgs.forEach(img => {
-            img.src = savedLogo;
+            img.src = logoUrl;
         });
-        const previewImg = document.getElementById('logo-preview-img');
-        if (previewImg) previewImg.src = savedLogo;
+        // 填充后台输入框和预览
+        const logoUrlInput = document.getElementById('logo-url');
+        if (logoUrlInput) logoUrlInput.value = logoUrl;
+        const previewImg = document.getElementById('logo-url-preview-img');
+        if (previewImg) {
+            previewImg.src = logoUrl;
+            previewImg.style.display = 'block';
+        }
+    } else {
+        const savedLogo = localStorage.getItem('qiyu_logo');
+        if (savedLogo) {
+            document.querySelectorAll('.logo-img').forEach(img => {
+                img.src = savedLogo;
+            });
+            const previewImg = document.getElementById('logo-preview-img');
+            if (previewImg) previewImg.src = savedLogo;
+        }
     }
-    const savedHeroBg = localStorage.getItem('qiyu_hero_bg');
-    if (savedHeroBg) {
+
+    // 首页背景图加载：优先使用链接
+    const heroBgUrl = localStorage.getItem('qiyu_hero_bg_url');
+    if (heroBgUrl) {
         const heroBgDiv = document.querySelector('.hero-bg');
         if (heroBgDiv) {
-            heroBgDiv.style.backgroundImage = `url(${savedHeroBg})`;
+            heroBgDiv.style.backgroundImage = `url(${heroBgUrl})`;
             heroBgDiv.style.backgroundSize = 'cover';
             heroBgDiv.style.backgroundRepeat = 'no-repeat';
             heroBgDiv.style.backgroundPosition = 'center center';
         }
-        const previewBg = document.getElementById('hero-bg-preview-img');
-        if (previewBg) previewBg.src = savedHeroBg;
+        const heroBgUrlInput = document.getElementById('hero-bg-url');
+        if (heroBgUrlInput) heroBgUrlInput.value = heroBgUrl;
+        const previewBg = document.getElementById('hero-bg-url-preview-img');
+        if (previewBg) {
+            previewBg.src = heroBgUrl;
+            previewBg.style.display = 'block';
+        }
+    } else {
+        const savedHeroBg = localStorage.getItem('qiyu_hero_bg');
+        if (savedHeroBg) {
+            const heroBgDiv = document.querySelector('.hero-bg');
+            if (heroBgDiv) {
+                heroBgDiv.style.backgroundImage = `url(${savedHeroBg})`;
+                heroBgDiv.style.backgroundSize = 'cover';
+                heroBgDiv.style.backgroundRepeat = 'no-repeat';
+                heroBgDiv.style.backgroundPosition = 'center center';
+            }
+            const previewBg = document.getElementById('hero-bg-preview-img');
+            if (previewBg) previewBg.src = savedHeroBg;
+        }
     }
 }
 
