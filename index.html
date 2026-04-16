@@ -2113,6 +2113,17 @@ footer {
                     <div id="item-image-preview" style="margin-top:8px; display:none;">
                         <img id="item-image-preview-img" style="max-width:100%; max-height:150px; border-radius:8px;">
                     </div>
+                      <!-- ========== 新增：图片链接输入框 ========== -->
+               <div style="margin-top: 16px;">
+                    <label>图片链接（URL）</label>
+                    <input type="text" id="item-image-url-input" placeholder="https://... 或 /images/xxx.jpg" style="width: 100%; margin-bottom: 8px;">
+                    <button class="add-btn" onclick="previewItemImageUrl()" style="margin-top: 4px;">🔍 预览</button>
+                    <button class="add-btn" onclick="saveItemImageUrl()" style="margin-top: 4px;">💾 保存链接</button>
+               <div id="item-image-url-preview" style="margin-top: 8px;">
+                       <img id="item-image-url-preview-img" style="max-width: 100%; max-height: 150px; border-radius: 8px; display: none;">
+                     </div>
+                    </div>
+    <!-- ========== 新增结束 ========== -->
                 </div>
                 <!-- 富文本描述 -->
                 <div class="form-group full">
@@ -2404,6 +2415,16 @@ footer {
                     <input type="file" id="review-avatar-upload" accept="image/jpeg,image/png">
                     <div id="review-avatar-preview" style="margin-top:8px;display:none"><img id="review-avatar-img" style="width:60px;height:60px;border-radius:50%;object-fit:cover"></div>
                 </div>
+                 <!-- 新增的图片链接输入框 -->
+                <div class="form-group full">
+                    <label>头像图片链接（URL）</label>
+                    <input type="text" id="review-avatar-url" placeholder="https://... 或 /images/avatar.jpg" style="width: 100%;">
+                    <button class="add-btn" onclick="previewReviewAvatarUrl()" style="margin-top: 4px;">🔍 预览</button>
+                    <button class="add-btn" onclick="saveReviewAvatarUrl()" style="margin-top: 4px;">💾 保存链接</button>
+                    <div id="review-avatar-url-preview" style="margin-top: 8px;">
+                        <img id="review-avatar-url-preview-img" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; display: none;">
+                    </div>
+                </div>
                 <div class="form-group full"><label>Review Text (Rich Text)</label>
                     <div class="rte-container" id="review-text-rte"></div>
                 </div>
@@ -2557,51 +2578,49 @@ let globalReviews = [
       text: "From the gourmet meals to the private museum tours, every moment was curated to perfection. QIYU understands luxury travel. I've already booked my return trip!",
       avatar: "" }
 ];
-
+// 通用合并函数：将保存的数据(sav)合并到默认数据(def)中
+function mergeData(defaultData, savedData) {
+    if (!savedData) return [...defaultData];
+    return defaultData.map(defaultItem => {
+        const savedItem = savedData.find(s => s.id === defaultItem.id);
+        return savedItem ? { ...defaultItem, ...savedItem } : { ...defaultItem };
+    });
+}
 // 页面加载时从 localStorage 恢复所有数据
 function loadAllDataFromLocalStorage() {
-    // 恢复城市
+   // 合并城市
     const savedCities = localStorage.getItem('qiyu_cities');
-    if (savedCities) {
-        state.cities = JSON.parse(savedCities);
-        DATA.cities = state.cities;
-    }
-    // 恢复景点
+    state.cities = mergeData(DATA.cities, savedCities ? JSON.parse(savedCities) : null);
+    DATA.cities = JSON.parse(JSON.stringify(state.cities));
+
+    // 合并景点
     const savedAttractions = localStorage.getItem('qiyu_attractions');
-    if (savedAttractions) {
-        DATA.attractions = JSON.parse(savedAttractions);
-    }
-    // 恢复酒店
+    DATA.attractions = mergeData(DATA.attractions, savedAttractions ? JSON.parse(savedAttractions) : null);
+
+    // 合并酒店
     const savedHotels = localStorage.getItem('qiyu_hotels');
-    if (savedHotels) {
-        DATA.hotels = JSON.parse(savedHotels);
-    }
-    // 恢复餐厅
+    DATA.hotels = mergeData(DATA.hotels, savedHotels ? JSON.parse(savedHotels) : null);
+
+    // 合并餐厅
     const savedRestaurants = localStorage.getItem('qiyu_restaurants');
-    if (savedRestaurants) {
-        DATA.restaurants = JSON.parse(savedRestaurants);
-    }
-    // 恢复交通
+    DATA.restaurants = mergeData(DATA.restaurants, savedRestaurants ? JSON.parse(savedRestaurants) : null);
+
+    // 合并交通
     const savedTransport = localStorage.getItem('qiyu_transport');
-    if (savedTransport) {
-        DATA.transport = JSON.parse(savedTransport);
-    }
-    // 恢复导游
+    DATA.transport = mergeData(DATA.transport, savedTransport ? JSON.parse(savedTransport) : null);
+
+    // 合并导游
     const savedGuides = localStorage.getItem('qiyu_guides');
-    if (savedGuides) {
-        DATA.guides = JSON.parse(savedGuides);
-    }
-    // 恢复旅游团
+    DATA.guides = mergeData(DATA.guides, savedGuides ? JSON.parse(savedGuides) : null);
+
+    // 合并旅游团
     const savedTours = localStorage.getItem('qiyu_tours');
-    if (savedTours) {
-        state.tours = JSON.parse(savedTours);
-        DATA.tours = state.tours;
-    }
-    // 恢复订单
+    state.tours = mergeData(DATA.tours, savedTours ? JSON.parse(savedTours) : null);
+    DATA.tours = JSON.parse(JSON.stringify(state.tours));
+
+    // 合并订单
     const savedBookings = localStorage.getItem('qiyu_bookings');
-    if (savedBookings) {
-        state.bookings = JSON.parse(savedBookings);
-    }
+    state.bookings = savedBookings ? JSON.parse(savedBookings) : [...DATA.bookings];
 }
 
 // 加载本地存储数据
@@ -3294,29 +3313,43 @@ function renderHome() {
 function renderTours(limit = null) {
     const grid = document.getElementById('tours-grid');
     if (!grid) return;
-    let toursToShow = DATA.tours;
+    
+    // 统一使用 state.tours（后台保存的数据）
+    let toursToShow = state.tours;
     if (limit && limit > 0) {
-        toursToShow = DATA.tours.slice(0, limit);
+        toursToShow = state.tours.slice(0, limit);
     }
-    grid.innerHTML = toursToShow.map(t => `
-        <div class="tour-card" style="cursor: pointer;" onclick="navigate('tour-detail', event, ${t.id})">
-            <div class="tour-img">
-                <img src="${t.imageUrl}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
-                <div class="tour-duration">${t.days} Days</div>
-                <div class="tour-price">From $${t.price.toLocaleString()}</div>
-            </div>
-            <div class="tour-body">
-                <h3>${t.name}</h3>
-                <ul class="tour-highlights">
-                    ${t.highlights.slice(0,3).map(h => `<li>${h}</li>`).join('')}
-                </ul>
-                <div class="tour-actions">
-                    <button class="btn-sm btn-sm-primary" onclick="event.stopPropagation(); showTourDetail(${t.id})">View Details</button>
-                    <button class="btn-sm btn-sm-outline" onclick="event.stopPropagation(); navigate('customize',event)">Customize</button>
+    
+    grid.innerHTML = toursToShow.map(t => {
+        // 获取图片链接：优先使用 t.imageUrl，如果没有则从 DATA.tours 中查找默认值
+        let imgUrl = t.imageUrl;
+        if (!imgUrl) {
+            const defaultTour = DATA.tours.find(dt => dt.id === t.id);
+            if (defaultTour) imgUrl = defaultTour.imageUrl;
+        }
+        // 如果还是没有，使用占位图
+        if (!imgUrl) imgUrl = 'https://ui-avatars.com/api/?background=C9A84C&color=fff&size=600x400&font-size=0.5&name=No+Image';
+        
+        return `
+            <div class="tour-card" style="cursor: pointer;" onclick="navigate('tour-detail', event, ${t.id})">
+                <div class="tour-img">
+                    <img src="${imgUrl}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
+                    <div class="tour-duration">${t.days} Days</div>
+                    <div class="tour-price">From $${t.price.toLocaleString()}</div>
+                </div>
+                <div class="tour-body">
+                    <h3>${t.name}</h3>
+                    <ul class="tour-highlights">
+                        ${t.highlights.slice(0,3).map(h => `<li>${h}</li>`).join('')}
+                    </ul>
+                    <div class="tour-actions">
+                        <button class="btn-sm btn-sm-primary" onclick="event.stopPropagation(); showTourDetail(${t.id})">View Details</button>
+                        <button class="btn-sm btn-sm-outline" onclick="event.stopPropagation(); navigate('customize',event)">Customize</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function renderDestinations(limit = null) {
@@ -3413,6 +3446,7 @@ function renderCityDetail(cityId) {
             <div class="city-grid">
                 ${attractions.map(a => `
                     <div class="city-card">
+                      ${a.imageUrl ? `<img src="${a.imageUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">` : ''}
                         <div class="city-card-header">${a.name}</div>
                         <div class="city-card-body">
                             <div class="city-card-item"><span>🕒 Duration</span><span>${a.duration} hrs</span></div>
@@ -3430,6 +3464,7 @@ function renderCityDetail(cityId) {
             <div class="city-grid">
                 ${hotels.map(h => `
                     <div class="city-card">
+                        ${h.imageUrl ? `<img src="${h.imageUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">` : ''}
                         <div class="city-card-header">${h.name} <span class="city-badge">${'★'.repeat(h.stars)}</span></div>
                         <div class="city-card-body">
                             <div class="city-card-item"><span>📍 City</span><span>${h.city}</span></div>
@@ -3447,6 +3482,7 @@ function renderCityDetail(cityId) {
             <div class="city-grid">
                 ${restaurants.map(r => `
                     <div class="city-card">
+                      ${r.imageUrl ? `<img src="${r.imageUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">` : ''}
                         <div class="city-card-header">${r.name}</div>
                         <div class="city-card-body">
                             <div class="city-card-item"><span>🍜 Cuisine</span><span>${r.cuisine}</span></div>
@@ -3464,6 +3500,7 @@ function renderCityDetail(cityId) {
             <div class="city-grid">
                 ${transports.map(t => `
                     <div class="city-card">
+                      ${t.imageUrl ? `<img src="${t.imageUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">` : ''}
                         <div class="city-card-header">${t.icon} ${t.name}</div>
                         <div class="city-card-body">
                             <div class="city-card-item"><span>👥 Capacity</span><span>${t.capacity}</span></div>
@@ -3473,6 +3510,7 @@ function renderCityDetail(cityId) {
                 `).join('')}
                 ${guides.map(g => `
                     <div class="city-card">
+                      ${g.imageUrl ? `<img src="${g.imageUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;">` : ''}
                         <div class="city-card-header">${g.icon} ${g.name}</div>
                         <div class="city-card-body">
                             <div class="city-card-item"><span>🗣️ Language</span><span>${g.lang}</span></div>
@@ -3499,16 +3537,29 @@ function renderCityDetail(cityId) {
 
 // 渲染 Tour 详情页
 function renderTourDetail(tourId) {
-    const tour = DATA.tours.find(t => t.id == tourId);
+    // 优先从 state.tours 查找（后台保存的最新数据）
+    let tour = state.tours.find(t => t.id == tourId);
+    // 如果找不到，则从 DATA.tours 查找（默认数据）
+    if (!tour) {
+        tour = DATA.tours.find(t => t.id == tourId);
+    }
     if (!tour) {
         document.getElementById('tour-detail-content').innerHTML = '<p style="color:red;">Tour not found.</p>';
         return;
     }
-
+    
+    // 处理图片链接：优先使用 tour.imageUrl，如果没有则从默认数据中找
+    let imgUrl = tour.imageUrl;
+    if (!imgUrl) {
+        const defaultTour = DATA.tours.find(dt => dt.id === tour.id);
+        if (defaultTour) imgUrl = defaultTour.imageUrl;
+    }
+    if (!imgUrl) imgUrl = 'https://ui-avatars.com/api/?background=C9A84C&color=fff&size=600x400&font-size=0.5&name=No+Image';
+    
     const html = `
         <div style="max-width: 1000px; margin: 0 auto;">
             <div style="border-radius: var(--radius); overflow: hidden; margin-bottom: 32px; box-shadow: var(--shadow-lg);">
-                <img src="${tour.img}" alt="${tour.name}" style="width: 100%; height: 400px; object-fit: cover; display: block;">
+                <img src="${imgUrl}" alt="${tour.name}" style="width: 100%; height: 400px; object-fit: cover; display: block;">
             </div>
             <h1 style="font-size: 2.5rem; color: var(--navy); margin-bottom: 12px;">${tour.name}</h1>
             <div style="display: flex; gap: 16px; margin-bottom: 24px;">
@@ -3538,26 +3589,34 @@ function renderTourDetail(tourId) {
 function renderAllTours() {
     const grid = document.getElementById('all-tours-grid');
     if (!grid) return;
-    // 使用 DATA.tours 全部
-    grid.innerHTML = DATA.tours.map(t => `
-        <div class="tour-card" style="cursor: pointer;" onclick="navigate('tour-detail', event, ${t.id})">
-            <div class="tour-img">
-                <img src="${t.imageUrl}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
-                <div class="tour-duration">${t.days} Days</div>
-                <div class="tour-price">From $${t.price.toLocaleString()}</div>
-            </div>
-            <div class="tour-body">
-                <h3>${t.name}</h3>
-                <ul class="tour-highlights">
-                    ${t.highlights.slice(0,3).map(h => `<li>${h}</li>`).join('')}
-                </ul>
-                <div class="tour-actions">
-                    <button class="btn-sm btn-sm-primary" onclick="event.stopPropagation(); showTourDetail(${t.id})">View Details</button>
-                    <button class="btn-sm btn-sm-outline" onclick="event.stopPropagation(); navigate('customize',event)">Customize</button>
+    // 使用 state.tours（后台保存的数据）
+    grid.innerHTML = state.tours.map(t => {
+        let imgUrl = t.imageUrl;
+        if (!imgUrl) {
+            const defaultTour = DATA.tours.find(dt => dt.id === t.id);
+            if (defaultTour) imgUrl = defaultTour.imageUrl;
+        }
+        if (!imgUrl) imgUrl = 'https://ui-avatars.com/api/?background=C9A84C&color=fff&size=600x400&font-size=0.5&name=No+Image';
+        return `
+            <div class="tour-card" style="cursor: pointer;" onclick="navigate('tour-detail', event, ${t.id})">
+                <div class="tour-img">
+                    <img src="${imgUrl}" alt="${t.name}" loading="lazy" onerror="this.style.display='none'">
+                    <div class="tour-duration">${t.days} Days</div>
+                    <div class="tour-price">From $${t.price.toLocaleString()}</div>
+                </div>
+                <div class="tour-body">
+                    <h3>${t.name}</h3>
+                    <ul class="tour-highlights">
+                        ${t.highlights.slice(0,3).map(h => `<li>${h}</li>`).join('')}
+                    </ul>
+                    <div class="tour-actions">
+                        <button class="btn-sm btn-sm-primary" onclick="event.stopPropagation(); showTourDetail(${t.id})">View Details</button>
+                        <button class="btn-sm btn-sm-outline" onclick="event.stopPropagation(); navigate('customize',event)">Customize</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // 渲染所有 Cities（用于 all-cities 视图）
@@ -5413,6 +5472,7 @@ function openAttractionModal(id) {
     const imageUrl = item ? item.image : '';
     document.getElementById('item-image-url').value = imageUrl || '';
     updateItemImagePreview(imageUrl);
+    
     // 初始化富文本编辑器
     setTimeout(() => {
         initRTE('item-description-rte', item ? (item.description || '') : '', 'Enter description...', 150);
@@ -5433,6 +5493,21 @@ function openAttractionModal(id) {
             }
         };
     }
+    // ========== 在这里添加新代码 ==========
+    // 加载图片链接（如果已经保存过）
+    const savedImageUrl = item ? (item.imageUrl || '') : '';
+    const urlInput = document.getElementById('item-image-url-input');
+    const urlPreviewImg = document.getElementById('item-image-url-preview-img');
+    if (urlInput) {
+        urlInput.value = savedImageUrl;
+        if (savedImageUrl) {
+            urlPreviewImg.src = savedImageUrl;
+            urlPreviewImg.style.display = 'block';
+        } else {
+            urlPreviewImg.style.display = 'none';
+        }
+    }
+    // ====================================
     openModal('item-modal');
 }
 
@@ -5489,6 +5564,20 @@ function openHotelModal(id) {
             }
         };
     }
+     // ========== 新增：加载图片链接 ==========
+    const savedImageUrl = item ? (item.imageUrl || '') : '';
+    const urlInput = document.getElementById('item-image-url-input');
+    const urlPreviewImg = document.getElementById('item-image-url-preview-img');
+    if (urlInput) {
+        urlInput.value = savedImageUrl;
+        if (savedImageUrl) {
+            urlPreviewImg.src = savedImageUrl;
+            urlPreviewImg.style.display = 'block';
+        } else {
+            urlPreviewImg.style.display = 'none';
+        }
+    }
+    // ====================================
     openModal('item-modal');
 }
 
@@ -5543,6 +5632,20 @@ function openRestaurantModal(id) {
             }
         };
     }
+    // ========== 新增：加载图片链接 ==========
+    const savedImageUrl = item ? (item.imageUrl || '') : '';
+    const urlInput = document.getElementById('item-image-url-input');
+    const urlPreviewImg = document.getElementById('item-image-url-preview-img');
+    if (urlInput) {
+        urlInput.value = savedImageUrl;
+        if (savedImageUrl) {
+            urlPreviewImg.src = savedImageUrl;
+            urlPreviewImg.style.display = 'block';
+        } else {
+            urlPreviewImg.style.display = 'none';
+        }
+    }
+    // ====================================
     openModal('item-modal');
 }
 
@@ -5598,6 +5701,20 @@ function openTransportModal(id) {
             }
         };
     }
+     // ========== 新增：加载图片链接 ==========
+    const savedImageUrl = item ? (item.imageUrl || '') : '';
+    const urlInput = document.getElementById('item-image-url-input');
+    const urlPreviewImg = document.getElementById('item-image-url-preview-img');
+    if (urlInput) {
+        urlInput.value = savedImageUrl;
+        if (savedImageUrl) {
+            urlPreviewImg.src = savedImageUrl;
+            urlPreviewImg.style.display = 'block';
+        } else {
+            urlPreviewImg.style.display = 'none';
+        }
+    }
+    // ====================================
     openModal('item-modal');
 }
 
@@ -5653,6 +5770,20 @@ function openGuideModal(id) {
             }
         };
     }
+    // ========== 新增：加载图片链接 ==========
+    const savedImageUrl = item ? (item.imageUrl || '') : '';
+    const urlInput = document.getElementById('item-image-url-input');
+    const urlPreviewImg = document.getElementById('item-image-url-preview-img');
+    if (urlInput) {
+        urlInput.value = savedImageUrl;
+        if (savedImageUrl) {
+            urlPreviewImg.src = savedImageUrl;
+            urlPreviewImg.style.display = 'block';
+        } else {
+            urlPreviewImg.style.display = 'none';
+        }
+    }
+    // ====================================
     openModal('item-modal');
 }
 
@@ -5662,6 +5793,70 @@ function deleteGuide(id) {
     renderGuidesTable();
     localStorage.setItem('qiyu_guides', JSON.stringify(DATA.guides));
     showToast('Guide deleted', 'info');
+}
+
+// ========== 通用项目图片链接管理 ==========
+function previewItemImageUrl() {
+    const url = document.getElementById('item-image-url-input').value.trim();
+    const previewImg = document.getElementById('item-image-url-preview-img');
+    if (url) {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+        previewImg.onerror = () => {
+            previewImg.style.display = 'none';
+            showToast('图片链接无效，无法预览', 'error');
+        };
+    } else {
+        previewImg.style.display = 'none';
+        showToast('请输入图片链接', 'info');
+    }
+}
+
+function saveItemImageUrl() {
+    const url = document.getElementById('item-image-url-input').value.trim();
+    if (!url) {
+        showToast('请先输入图片链接', 'error');
+        return;
+    }
+    // 将链接保存到当前编辑项的 imageUrl 字段中
+    const type = document.getElementById('item-modal-type').value;
+    const editId = document.getElementById('item-edit-id').value;
+    if (!editId) {
+        showToast('请先保存项目，再添加图片链接', 'error');
+        return;
+    }
+    let targetArray;
+    switch (type) {
+        case 'attraction': targetArray = DATA.attractions; break;
+        case 'hotel': targetArray = DATA.hotels; break;
+        case 'restaurant': targetArray = DATA.restaurants; break;
+        case 'transport': targetArray = DATA.transport; break;
+        case 'guide': targetArray = DATA.guides; break;
+        default: showToast('不支持的类型', 'error'); return;
+    }
+    const item = targetArray.find(i => i.id == editId);
+    if (item) {
+        item.imageUrl = url;
+        // 保存到 localStorage
+        localStorage.setItem(`qiyu_${type}s`, JSON.stringify(targetArray));
+        // 更新预览
+        const previewImg = document.getElementById('item-image-url-preview-img');
+        if (previewImg) {
+            previewImg.src = url;
+            previewImg.style.display = 'block';
+        }
+        // 刷新后台表格
+        switch (type) {
+            case 'attraction': renderAttractionsTable(); break;
+            case 'hotel': renderHotelsTable(); break;
+            case 'restaurant': renderRestaurantsTable(); break;
+            case 'transport': renderTransportTable(); break;
+            case 'guide': renderGuidesTable(); break;
+        }
+        showToast('图片链接已保存', 'success');
+    } else {
+        showToast('项目不存在', 'error');
+    }
 }
 
 // 通用保存函数（根据 item-modal-type 决定保存到哪个数组）
@@ -5688,6 +5883,7 @@ function saveGenericItem() {
             price: parseInt(document.getElementById('item-price').value) || 0,
             status: document.getElementById('item-status').value,
             description: description,
+            imageUrl: document.getElementById('item-image-url-input').value || '',   // 新增
             image: image
         };
         if (editId) {
@@ -5708,6 +5904,7 @@ function saveGenericItem() {
             price: parseInt(document.getElementById('item-price').value) || 0,
             status: document.getElementById('item-status').value,
             description: description,
+            imageUrl: document.getElementById('item-image-url-input').value || '',   // 新增
             image: image
         };
         if (editId) {
@@ -5728,6 +5925,7 @@ function saveGenericItem() {
             price: document.getElementById('item-price-range').value,
             status: document.getElementById('item-status').value,
             description: description,
+            imageUrl: document.getElementById('item-image-url-input').value || '',   // 新增
             image: image
         };
         if (editId) {
@@ -5749,6 +5947,7 @@ function saveGenericItem() {
             icon: document.getElementById('item-icon').value,
             status: 'active',
             description: description,
+            imageUrl: document.getElementById('item-image-url-input').value || '',   // 新增
             image: image
         };
         if (editId) {
@@ -5770,6 +5969,7 @@ function saveGenericItem() {
             icon: document.getElementById('item-icon').value,
             status: 'active',
             description: description,
+            imageUrl: document.getElementById('item-image-url-input').value || '',   // 新增
             image: image
         };
         if (editId) {
@@ -5787,50 +5987,6 @@ function saveGenericItem() {
 }
 
 // Tour CRUD
-window.openTourModal = function(id) {
-    console.log("openTourModal 被调用, id:", id); // 调试日志
-    const tour = id ? state.tours.find(x => x.id === id) : null;
-    
-    // 设置隐藏字段
-    const editIdField = document.getElementById('tour-edit-id');
-    if (editIdField) editIdField.value = id || '';
-    
-    // 设置弹窗标题
-    const titleEl = document.getElementById('tour-modal-title');
-    if (titleEl) titleEl.textContent = tour ? 'Edit Tour' : 'Create New Tour';
-    
-    // 填充表单
-    const nameInput = document.getElementById('tour-name-en');
-    if (nameInput) nameInput.value = tour ? tour.name : '';
-    const durationInput = document.getElementById('tour-duration');
-    if (durationInput) durationInput.value = tour ? tour.days : 5;
-    const priceInput = document.getElementById('tour-price');
-    if (priceInput) priceInput.value = tour ? tour.price : 2800;
-    const highlightsInput = document.getElementById('tour-highlights');
-    if (highlightsInput) highlightsInput.value = tour ? (tour.highlights || []).join('\n') : '';
-    const statusSelect = document.getElementById('tour-status');
-    if (statusSelect) statusSelect.value = tour ? (tour.status || 'active') : 'active';
-    const imgInput = document.getElementById('tour-img');
-    if (imgInput) imgInput.value = tour ? (tour.img || '') : '';
-    
-    // 图片预览
-    if (typeof updateTourImagePreview === 'function') updateTourImagePreview(imgInput ? imgInput.value : '');
-    
-    // 初始化富文本编辑器
-    setTimeout(() => {
-        if (typeof initRTE === 'function') {
-            initRTE('tour-desc-rte', tour ? (tour.desc || '') : '', 'Tour description...');
-        }
-    }, 50);
-    
-    // 加载行程编排器
-    if (typeof loadTourItineraryFromTour === 'function') loadTourItineraryFromTour(tour);
-    if (typeof renderTourLibrary === 'function') renderTourLibrary();
-    
-    // 打开弹窗
-    if (typeof openModal === 'function') openModal('tour-modal');
-};
-
 function saveTour() {
     console.log("saveTour 被调用"); // 调试日志
     try {
@@ -5856,7 +6012,7 @@ function saveTour() {
             desc: descEditor ? descEditor.innerHTML : '',
             highlights: highlightsRaw.split('\n').filter(h => h.trim()),
             status: document.getElementById('tour-status').value,
-            img: document.getElementById('tour-img').value || 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=600&q=80',
+            imageUrl: document.getElementById('tour-img').value || 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=600&q=80',
             itinerary: itineraryData
         };
 
@@ -5895,6 +6051,8 @@ function saveTour() {
         if (typeof renderToursAdminTable === 'function') renderToursAdminTable();
         if (typeof renderTours === 'function') renderTours();
         localStorage.setItem('qiyu_tours', JSON.stringify(state.tours));
+        // 在 localStorage.setItem 之后添加
+        DATA.tours = JSON.parse(JSON.stringify(state.tours));
 
         // 关闭模态窗并清空隐藏字段
         closeModal('tour-modal');
@@ -6503,7 +6661,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const rememberCheckbox = document.getElementById('remember-checkbox');
         if (rememberCheckbox) rememberCheckbox.checked = true;
     }
-
       // 从 localStorage 恢复所有数据
     loadAllDataFromLocalStorage();
 
@@ -6911,28 +7068,27 @@ function collectTourItineraryForSave() {
     return { days: tourItinerary.days };
 }
 
-// 重写 openTourModal
+// 统一的 openTourModal 函数（合并版本）
 window.openTourModal = function(id) {
     const tour = id ? state.tours.find(x => x.id === id) : null;
     
-    // ========== 关键：设置隐藏字段的值 ==========
+    // 设置隐藏字段
     const editIdField = document.getElementById('tour-edit-id');
     if (editIdField) {
         editIdField.value = id || '';
     }
-    // 同时也保留 dataset 方式（兼容）
     document.getElementById('tour-modal').dataset.editId = id || '';
     
     // 设置弹窗标题
     document.getElementById('tour-modal-title').textContent = tour ? 'Edit Tour' : 'Create New Tour';
     
-    // 填充表单
+    // 填充表单（关键：使用 imageUrl 而不是 img）
     document.getElementById('tour-name-en').value = tour ? tour.name : '';
     document.getElementById('tour-duration').value = tour ? tour.days : 5;
     document.getElementById('tour-price').value = tour ? tour.price : 2800;
     document.getElementById('tour-highlights').value = tour ? (tour.highlights || []).join('\n') : '';
     document.getElementById('tour-status').value = tour ? (tour.status || 'active') : 'active';
-    document.getElementById('tour-img').value = tour ? (tour.img || '') : '';
+    document.getElementById('tour-img').value = tour ? (tour.imageUrl || '') : '';
     
     // 图片预览
     updateTourImagePreview(document.getElementById('tour-img').value);
@@ -6948,9 +7104,19 @@ window.openTourModal = function(id) {
     
     // 打开弹窗
     openModal('tour-modal');
+    
+    // 延迟展开所有分类（确保弹窗已打开且 DOM 已渲染）
+    setTimeout(() => {
+        const sidebar = document.getElementById('tour-lib-sidebar');
+        if (sidebar) {
+            sidebar.querySelectorAll('.lib-cat-body').forEach(body => {
+                body.classList.add('open');
+                const toggle = body.previousElementSibling?.querySelector('.lib-cat-toggle');
+                if (toggle) toggle.textContent = '▲';
+            });
+        }
+    }, 150);
 };
-
-// 重写 saveTour
 
 // ==================== Tour行程编排器辅助函数补全 ====================
 function filterTourLibrary(query) {
@@ -6967,21 +7133,6 @@ function clearTourItinerary() {
         showToast('Itinerary cleared', 'info');
     }
 }
-
-// 确保在打开Tour模态窗时初始化行程编排器
-const originalOpenTourModal = window.openTourModal;
-window.openTourModal = function(id) {
-    if (originalOpenTourModal) originalOpenTourModal(id);
-    setTimeout(() => {
-        renderTourLibrary();
-        // 打开所有分类
-        document.querySelectorAll('#tour-lib-sidebar .lib-cat-body').forEach(body => {
-            body.classList.add('open');
-            const toggle = body.previousElementSibling?.querySelector('.lib-cat-toggle');
-            if (toggle) toggle.textContent = '▲';
-        });
-    }, 100);
-};
 
 function onTourItemDragEnd(e) {
     if (e.target) e.target.style.opacity = '1';
@@ -7072,6 +7223,16 @@ function openReviewModal(id) {
         previewDiv.style.display = 'none';
         if (previewImg) previewImg.src = '';
     }
+    // ========== 新增：加载已保存的头像链接 ==========
+    const avatarUrl = review ? (review.avatar || '') : '';
+    document.getElementById('review-avatar-url').value = avatarUrl;
+    if (avatarUrl) {
+        document.getElementById('review-avatar-url-preview-img').src = avatarUrl;
+        document.getElementById('review-avatar-url-preview-img').style.display = 'block';
+    } else {
+        document.getElementById('review-avatar-url-preview-img').style.display = 'none';
+    }
+    // =============================================
     
     // 初始化富文本编辑器（延迟确保 DOM 存在）
     setTimeout(() => {
@@ -7138,6 +7299,54 @@ function saveReview() {
     showToast('Review saved!', 'success');
 }
 
+// ========== 评论头像图片链接管理 ==========
+function previewReviewAvatarUrl() {
+    const url = document.getElementById('review-avatar-url').value.trim();
+    const previewImg = document.getElementById('review-avatar-url-preview-img');
+    if (url) {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+        previewImg.onerror = () => {
+            previewImg.style.display = 'none';
+            showToast('图片链接无效，无法预览', 'error');
+        };
+    } else {
+        previewImg.style.display = 'none';
+        showToast('请输入图片链接', 'info');
+    }
+}
+
+function saveReviewAvatarUrl() {
+    const url = document.getElementById('review-avatar-url').value.trim();
+    const editId = document.getElementById('review-edit-id').value;
+    if (!editId) {
+        showToast('请先保存评论，再添加头像', 'error');
+        return;
+    }
+    if (!url) {
+        showToast('请先输入图片链接', 'error');
+        return;
+    }
+    const review = globalReviews.find(r => r.id == editId);
+    if (review) {
+        review.avatar = url;
+        saveReviewsToStorage();
+        renderReviewsAdminTable();
+        renderReviews();
+        // 更新预览
+        const previewImg = document.getElementById('review-avatar-url-preview-img');
+        if (previewImg) {
+            previewImg.src = url;
+            previewImg.style.display = 'block';
+        }
+        // 同时更新原有的预览（如果有）
+        const oldPreviewImg = document.getElementById('review-avatar-img');
+        if (oldPreviewImg) oldPreviewImg.src = url;
+        showToast('头像链接已保存', 'success');
+    } else {
+        showToast('评论不存在', 'error');
+    }
+}
 // 删除 Reviews
 function deleteReview(id) {
     if (!confirm('Delete this testimonial permanently?')) return;
