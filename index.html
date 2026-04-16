@@ -1053,7 +1053,20 @@ footer {
 .search-icon-btn:hover {
     color: var(--gold) !important;
 }
-
+/* 联系信息卡片样式 */
+.contact-card {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 12px 24px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    min-width: 180px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.contact-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -1765,6 +1778,28 @@ footer {
 <!-- ===== VIEW: INQUIRY ===== -->
 <div id="view-inquiry" class="view">
   <div class="inquiry-page">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 40px;">
+    <div class="contact-card">
+        <div style="font-size: 1.2rem; margin-bottom: 4px;">📧</div>
+        <div style="font-weight: 600; color: var(--navy);">Email</div>
+        <div style="color: var(--gold); font-size: 0.9rem;">qiyuchinatravel@gmail.com</div>
+    </div>
+    <div class="contact-card">
+        <div style="font-size: 1.2rem; margin-bottom: 4px;">📞</div>
+        <div style="font-weight: 600; color: var(--navy);">Phone</div>
+        <div style="color: var(--gold); font-size: 0.9rem;">+86 18210380507</div>
+    </div>
+    <div class="contact-card">
+        <div style="font-size: 1.2rem; margin-bottom: 4px;">💬</div>
+        <div style="font-weight: 600; color: var(--navy);">WeChat</div>
+        <div style="color: var(--gold); font-size: 0.9rem;">+86 18210380507</div>
+    </div>
+    <div class="contact-card">
+        <div style="font-size: 1.2rem; margin-bottom: 4px;">📱</div>
+        <div style="font-weight: 600; color: var(--navy);">WhatsApp</div>
+        <div style="color: var(--gold); font-size: 0.9rem;">+86 18210380507</div>
+    </div>
+</div>
     <div class="section-badge">Get In Touch</div>
     <h2>Request a Consultation</h2>
     <p>Tell us about your dream China journey and we'll craft the perfect itinerary for you.</p>
