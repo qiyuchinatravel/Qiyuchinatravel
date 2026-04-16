@@ -1885,6 +1885,18 @@ footer {
     </div>
 </div>
 
+<!-- ===== VIEW: BLOG DETAIL ===== -->
+<div id="view-blog-detail" class="view">
+    <div class="blog-detail-wrapper" style="max-width: 1200px; margin: 0 auto; padding: 120px 24px 60px;">
+        <div id="blog-detail-content">
+            <!-- 动态内容将在这里渲染 -->
+        </div>
+        <div style="text-align: center; margin-top: 40px;">
+            <button class="btn-outline" onclick="navigate('home', event)" style="border-color: var(--gold); color: var(--gold);">← Back to Home</button>
+        </div>
+    </div>
+</div>
+
 <!-- ===== VIEW: CITY DETAIL ===== -->
 <div id="view-city-detail" class="view">
     <div class="city-detail-wrapper">
@@ -2992,6 +3004,12 @@ function navigate(page, e, param = null) {
     state.currentView = 'tour-detail';
     window.history.pushState({}, '', `#/tour/${param}`);
 }
+else if (page === 'blog-detail' && param) {
+    renderBlogDetail(param);
+    document.getElementById('view-blog-detail').classList.add('active');
+    state.currentView = 'blog-detail';
+    window.location.hash = `#/blog/${param}`;
+}
 else if (page === 'all-tours') {
     renderAllTours();
     document.getElementById('view-all-tours').classList.add('active');
@@ -3741,7 +3759,7 @@ function renderAllBlogs() {
         const dateObj = new Date(post.date);
         const dateStr = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         return `
-            <div class="blog-card">
+            <div class="blog-card" style="cursor: pointer;" onclick="navigate('blog-detail', event, '${post.id}')">
                 <div class="blog-img">
                     <img src="${post.featuredImage}" alt="${title}" loading="lazy" onerror="this.style.display='none'">
                     <div class="blog-category">${post.category}</div>
@@ -3753,7 +3771,7 @@ function renderAllBlogs() {
                         <span class="blog-author">${post.author}</span>
                         <span class="blog-date">${dateStr}</span>
                     </div>
-                    <button class="blog-read-btn" onclick="showToast('Opening blog post...','info')">
+                    <button class="blog-read-btn" onclick="event.stopPropagation(); navigate('blog-detail', event, '${post.id}')">
                         ${readMoreText} →
                     </button>
                 </div>
@@ -3779,7 +3797,7 @@ function renderBlogSection(limit = null) {
         const dateObj = new Date(post.date);
         const dateStr = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         return `
-            <div class="blog-card">
+            <div class="blog-card" style="cursor: pointer;" onclick="navigate('blog-detail', event, '${post.id}')">
                 <div class="blog-img">
                     <img src="${post.featuredImage}" alt="${title}" loading="lazy" onerror="this.style.display='none'">
                     <div class="blog-category">${post.category}</div>
@@ -3791,13 +3809,50 @@ function renderBlogSection(limit = null) {
                         <span class="blog-author">${post.author}</span>
                         <span class="blog-date">${dateStr}</span>
                     </div>
-                    <button class="blog-read-btn" onclick="showToast('Opening blog post...','info')">
+                    <button class="blog-read-btn" onclick="event.stopPropagation(); navigate('blog-detail', event, '${post.id}')">
                         ${readMoreText} →
                     </button>
                 </div>
             </div>
         `;
     }).join('');
+}
+
+// 渲染博客详情页
+function renderBlogDetail(blogId) {
+    const blog = blogPosts.find(b => b.id == blogId);
+    if (!blog) {
+        document.getElementById('blog-detail-content').innerHTML = '<p style="color:red;">Blog post not found.</p>';
+        return;
+    }
+    const lang = state.currentLang;
+    const title = blog.title[lang] || blog.title.en;
+    const content = blog.content[lang] || blog.content.en || '<p>No content available.</p>';
+    const dateObj = new Date(blog.date);
+    const dateStr = dateObj.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const featuredImage = blog.featuredImage;
+    const category = blog.category;
+    const author = blog.author;
+    const tags = blog.tags || [];
+
+    const html = `
+        <article style="background: var(--white); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-md);">
+            ${featuredImage ? `<img src="${featuredImage}" alt="${title}" style="width: 100%; height: auto; max-height: 500px; object-fit: cover; border-radius: var(--radius); margin-bottom: 24px;">` : ''}
+            <div style="margin-bottom: 16px;">
+                <span style="background: var(--gold); color: var(--navy); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">${category}</span>
+                ${tags.map(tag => `<span style="background: var(--gray-100); color: var(--gray-600); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-left: 8px;">#${tag}</span>`).join('')}
+            </div>
+            <h1 style="font-size: 2.5rem; color: var(--navy); margin-bottom: 16px;">${title}</h1>
+            <div style="display: flex; gap: 20px; color: var(--gray-500); margin-bottom: 32px; border-bottom: 1px solid var(--gray-100); padding-bottom: 16px;">
+                <span>✍️ ${author}</span>
+                <span>📅 ${dateStr}</span>
+            </div>
+            <div class="blog-full-content" style="line-height: 1.8; font-size: 1.05rem; color: var(--gray-700);">
+                ${content}
+            </div>
+        </article>
+    `;
+    document.getElementById('blog-detail-content').innerHTML = html;
 }
 
 function showTourDetail(id) {
@@ -6730,6 +6785,14 @@ function handleHash() {
             if (state.currentView !== 'home') navigate('home');
         }
     }
+    else if (hash.startsWith('blog/')) {
+    const id = hash.split('/')[1];
+    if (id && blogPosts.find(b => b.id === id)) {
+        if (state.currentView !== 'blog-detail') navigate('blog-detail', null, id);
+    } else {
+        if (state.currentView !== 'home') navigate('home');
+    }
+}
     else {
         const pageMap = { 
             '': 'home', 
