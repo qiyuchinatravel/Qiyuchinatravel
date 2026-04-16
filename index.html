@@ -122,6 +122,7 @@ img { max-width: 100%; }
 .hero-bg {
     position: absolute; inset: 0;
     background: linear-gradient(135deg, #0D1B2A 0%, #1a3a5c 50%, #0D1B2A 100%);
+    background-image: url('https://fastly.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/changcheng1.png');
     background-repeat: no-repeat;      /* 不重复平铺 */
     background-size: cover;            /* 覆盖整个区域 */
     background-position: center center; /* 居中显示 */
@@ -4396,6 +4397,30 @@ function loadSiteImages() {
     }
 
     // 首页背景图加载：优先使用链接
+        /*
+    // 首页背景图加载部分
+    const heroBgUrl = localStorage.getItem('qiyu_hero_bg_url');
+    if (heroBgUrl) {
+        const heroBgDiv = document.querySelector('.hero-bg');
+        if (heroBgDiv) {
+            heroBgDiv.style.backgroundImage = `url(${heroBgUrl})`;
+            heroBgDiv.style.backgroundSize = 'cover';
+            heroBgDiv.style.backgroundRepeat = 'no-repeat';
+            heroBgDiv.style.backgroundPosition = 'center center';
+        }
+    } else {
+        const savedHeroBg = localStorage.getItem('qiyu_hero_bg');
+        if (savedHeroBg) {
+            const heroBgDiv = document.querySelector('.hero-bg');
+            if (heroBgDiv) {
+                heroBgDiv.style.backgroundImage = `url(${savedHeroBg})`;
+                heroBgDiv.style.backgroundSize = 'cover';
+                heroBgDiv.style.backgroundRepeat = 'no-repeat';
+                heroBgDiv.style.backgroundPosition = 'center center';
+            }
+        }
+    }
+    */
     const heroBgUrl = localStorage.getItem('qiyu_hero_bg_url');
     if (heroBgUrl) {
         const heroBgDiv = document.querySelector('.hero-bg');
