@@ -1067,6 +1067,23 @@ footer {
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
 }
+
+/* 条款页面文字优化 */
+.terms-content h3 {
+  margin-top: 1.8rem;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+  border-left: 4px solid var(--gold);
+  padding-left: 16px;
+}
+.terms-content p {
+  margin-bottom: 1rem;
+}
+.terms-content ul {
+  margin-left: 2rem;
+  margin-bottom: 1rem;
+}
+
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -1288,6 +1305,7 @@ footer {
         <li><a href="javascript:void(0)" onclick="navigate('inquiry', event)">Group Tours</a></li>
         <li><a href="javascript:void(0)" onclick="navigate('inquiry', event)">Honeymoon</a></li>
         <li><a href="javascript:void(0)" onclick="navigate('inquiry', event)">Business Travel</a></li>
+        <li><a href="javascript:void(0);" onclick="navigate('terms', event); return false;">Terms of Service</a></li>
         <li><a href="javascript:void(0)" onclick="navigate('inquiry', event)">Visa Assistance</a></li>
         <li><a href="javascript:void(0)" onclick="navigate('inquiry', event)">Airport Transfers</a></li>
     </ul>
@@ -1955,6 +1973,85 @@ footer {
             </button>
         </div>
     </div>
+</div>
+
+<!-- ===== VIEW: TERMS OF SERVICE ===== -->
+<div id="view-terms" class="view">
+  <div class="terms-wrapper" style="max-width: 1200px; margin: 0 auto; padding: 120px 24px 60px;">
+    <div class="terms-header" style="text-align: center; margin-bottom: 48px;">
+      <div class="section-badge" style="color: var(--gold);">Legal</div>
+      <h1 style="font-size: 2.5rem; color: var(--navy); margin-top: 12px;">Terms of Service</h1>
+      <div class="gold-line" style="margin: 16px auto 0;"></div>
+      <p style="color: var(--gray-500); margin-top: 16px;">Last updated: April 2026</p>
+    </div>
+    <div class="terms-content" style="background: var(--white); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow-sm); line-height: 1.8; color: var(--gray-700);">
+      <p>By booking or participating in a tour or any other related services ("tour") with Qiyu China Travel ("we", "our", "us"), a legally registered travel agency in Beijing, the Traveler ("you") acknowledge that you have read, understand, and agree to be bound by these Terms of Service ("terms"). These terms comply with the 2026 Version of Group Travel Contract (Model Text) issued by the Ministry of Culture and Tourism and the State Administration for Market Regulation. If you make a booking on behalf of other participants, you guarantee that you have the authority to accept and do accept these terms on behalf of the other participants in your party.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">1. BOOKING AND CONTRACT</h3>
+      <p>Your booking is confirmed and a contract exists when we confirm the receipt of the applicable deposit by email or official receipt. This contract is formulated with reference to the 2026 Version of Group Travel Contract (Model Text) to protect the legitimate rights and interests of both parties. You must be at least 18 years of age to make a booking. You agree to provide us with full, complete, and accurate information (including but not limited to personal identity information, travel document information, and health status) as required for tour arrangement and compliance with relevant regulations.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">2. PRICE, QUOTATION, AND PAYMENT</h3>
+      <p>All prices published on our website, WeChat official account or other publicity channels are subject to change without prior notice. Quotations are also subject to change prior to booking. Prices are quoted in the local currency, Chinese Yuan (CNY), and include the costs of the services clearly stated in the tour package, excluding personal consumption and other additional expenses not specified.</p>
+      <p>Depending on your itinerary (especially for domestic tours departing from Beijing and surrounding regional tours) and the departure date of your tour, a deposit of 10-100% of the total tour price is required at the time of booking. The outstanding balance is due 45 to 15 days prior to the departure date. Your travel specialist will advise you of the specific deposit ratio and balance payment deadline prior to booking, which shall be consistent with the 2026 Version of Group Travel Contract (Model Text) requirements.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">3. TRAVEL DOCUMENTS</h3>
+      <p>It is your responsibility to obtain and to have in your possession all the required documentation and identification required for travel (including domestic and international travel). These documents may include but are not limited to a valid passport, a Chinese visa, permits and certificates, ID cards (for Chinese citizens), and insurance policies. For international travel, your passport must be valid for at least six months from the last date of travel with us as set out in your itinerary. When traveling, you must carry the same travel documents as the copies you have provided to us.</p>
+      <p>The Chinese government may require travelers to apply for a permit when traveling to specific regions, such as Tibet. We will assist you in applying for such permits in accordance with relevant regulations, but you are responsible for providing the required documents. We do not guarantee that the relevant authorities will issue your permit even after you have prepared all the documents.</p>
+      <p>You are solely responsible for any costs, delays, or losses incurred as a result of missing or defective documentation, including but not limited to visa rejection, entry refusal, and tour cancellation.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">4. MEDICAL, HEALTH, AND INSURANCE</h3>
+      <p>You are responsible for assessing whether a tour is suitable for you. You should consult your physician to confirm your fitness for travel and participation in any planned activities (especially for tours involving mountain climbing, long-distance driving, or remote areas). We do not provide medical advice; you should seek your physician's advice on vaccinations and medical precautions as needed.</p>
+      <p>Travel in some regions of China may involve visiting remote or developing areas where medical care may not be easily accessible and medical facilities may not meet the standards of those found in your home country. We make no representations and give no warranties in relation to the availability or standard of medical facilities in such regions.</p>
+      <p>In accordance with the 2026 Version of Group Travel Contract (Model Text), we highly recommend you purchase travel insurance that covers all applicable dates of travel with us. Your travel insurance should at least cover personal injury and emergency medical expenses. You are recommended to extend your coverage to include cancellation, curtailment, and all other expenses that may arise as a result of loss, damage, injury, delay or inconvenience while traveling. You are responsible for advising your insurer of the type of travel, destination(s), and activities included in your booking so that the insurer may provide appropriate coverage.</p>
+      <p>You acknowledge that insurance coverage is not included in the cost of any tour offered by us. It is your responsibility to ensure that you have sufficient coverage and will be at your own risk if you fail to do so.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">5. FLEXIBILITY AND UNUSED SERVICES</h3>
+      <p>After your booking has been confirmed or your tour has started, we may be forced to modify your itinerary, schedule, accommodation, activities, and mode of transportation due to unforeseeable circumstances, operational concerns or concerns for your health, safety, enjoyment or comfort, or events outside of our control (including but not limited to traffic control, scenic area closures, and extreme weather in Beijing and surrounding tour areas). You acknowledge that the nature of travel requires flexibility and acknowledge that you will permit reasonable alterations to services or itineraries. Any changes are at our discretion. We will notify you as soon as practically possible and will not be liable for any indirect and or consequential losses associated with any changes to a booking or itinerary.</p>
+      <p>Where a significant element of a tour as described cannot be provided, we will make suitable alternative arrangements where possible in line with the 2026 Version of Group Travel Contract (Model Text). If it is not possible to provide a suitable alternative or if you reasonably reject any suitable alternatives, we will provide you with a refund for unused products or services unless the failure to provide is due to your unreasonable conduct or force majeure.</p>
+      <p>If you wish to change your itinerary, schedule, accommodation, activities or mode of transportation after your booking has been confirmed or your tour has started, we will do our best to assist you in making the change, but make no guarantees. You will bear any extra costs incurred as a result of these changes. If you wish to cancel part of your trip, we will refund you any costs that we can recover from the cancellation of the unused products or services as determined at our discretion.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">6. IN THE EVENT THAT YOU CANCEL A TOUR</h3>
+      <p>If you have to cancel your whole trip before departure, you will need to notify your travel specialist by email, WeChat or phone as early as possible. The earlier you notify us, the smaller your loss will be. The cancellation fee, if charged, will be determined according to the date on which we receive your notice of cancellation, and shall comply with the relevant provisions of the 2026 Version of Group Travel Contract (Model Text).</p>
+      <p>Cancellation fees charged by us:</p>
+      <ul style="margin: 8px 0 8px 24px;">
+        <li>(a) Cancellation received 14 days or more before your tour starts: no cancellation fee</li>
+        <li>(b) Cancellation received 13 to 7 days before your tour starts: 10% of the tour price</li>
+        <li>(c) Cancellation received 6 to 0 days before your tour starts: 20% of the tour price</li>
+      </ul>
+      <p>Cancellation fees charged by third-party service providers: Canceling your tour may incur third-party cancellation fees (such as airlines, rail companies, hotels, scenic spots and banks). All fees will be itemized within 24 hours of receiving your notice of cancellation, and we will provide you with relevant proof in accordance with regulations.</p>
+      <p>An alternative cancellation policy may apply to certain special tours (such as group tours, peak season tours, and customized tours). Your travel specialist will advise you of any such policy prior to booking.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">7. IN THE EVENT THAT WE CANCEL A TOUR</h3>
+      <p>If we cancel a tour before the date of departure for reasons other than Force Majeure and the cancellation is not a result of your fault or negligence, in accordance with the 2026 Version of Group Travel Contract (Model Text), you may choose one of the following options:</p>
+      <ul style="margin: 8px 0 8px 24px;">
+        <li>(a) a substitute tour of equivalent or superior value</li>
+        <li>(b) a substitute tour of lesser value and to recover the difference in price</li>
+        <li>(c) a full refund of all fees paid for the cancelled tour</li>
+      </ul>
+      <p>We are not responsible for any incidental expenses or consequential losses that you incur as a result of the cancelled booking including, but not limited to, visas, vaccinations, non-refundable flights or trains, non-refundable car parking, and any other fees or loss of earnings.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">8. LIABILITY</h3>
+      <p>By traveling with us you acknowledge that you have considered any potential risks to health and safety. You acknowledge that there may be a significant degree of personal risk involved in participating in high-risk activities (such as hiking, rafting) or travel to remote regions. Standards of hygiene, accommodation and transport in some areas of China may be lower than the standards you may reasonably expect in your home country. You hereby release us from all claims and causes of action arising from any losses, damages, injuries or death resulting from the risks inherent to travel.</p>
+      <p>You must at all times strictly comply with all applicable laws and regulations in China, as well as the rules and regulations of scenic spots, hotels, and transportation providers. Should you commit any illegal act when on tour or, if in our opinion, your behavior is causing or is likely to cause danger, distress or material annoyance to others, we may immediately terminate any services at your expense. You will not be entitled to any refund or costs incurred as a result of termination of your travel arrangements.</p>
+      <p>You agree to take all prudent measures in relation to your own safety while on tour, including, but not limited to, the proper use of safety devices and obeying all posted signs and oral or written warnings regarding health and safety. Neither we nor our service providers are liable for loss or damages caused by your failure to comply with safety instructions or warnings.</p>
+      <p>We act only as a sales agent for the applicable air carrier, railway company, and other transportation providers; the terms and conditions of these providers apply to the purchase and use of tickets. We are not responsible for delays or changes to itineraries or departure times caused by these providers.</p>
+      <p>You agree that any assistance given by our representative(s) in arranging, selecting or booking any optional service that is not included in your booking with us is purely at your request and we make no warranties and expressly disclaim any liability arising from participation in these optional services.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">9. COMPLAINTS</h3>
+      <p>In accordance with the 2026 Version of Group Travel Contract (Model Text) and relevant regulations, you agree to bring any complaints to us as soon as possible in order to provide us with the opportunity to properly address them. You agree to inform your tour guide or travel specialist directly during the tour. We assume no liability for complaints that are not properly brought to our attention. Any complaint made after the completion of a tour must be received in writing (including email) within 15 days of the last day of travel, and we will handle it in accordance with relevant procedures and reply to you within the specified time limit.</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">10. FORCE MAJEURE</h3>
+      <p>We will not be liable in any way for death, bodily injury, illness, damage, delay or other loss or detriment to person or property, or financial costs both direct and indirect incurred, or for our failure to commence, perform or complete any duty owed to you if such death, delay, bodily injury (including emotional distress or injury), illness, damage or other loss or detriment to person or property is caused by Act of God, war or war like operations, terrorist activities or threat thereof, civil commotions, labor disputes, interference by authorities, political disturbance, riots, insurrection and government restraint, fire, extreme weather, epidemic, natural disasters, and any other cause whatsoever beyond our reasonable control. Any event which we or our service providers cannot, even with all due care, reasonably foresee constitute force majeure. In case of force majeure, we will assist you in minimizing losses in accordance with the 2026 Version of Group Travel Contract (Model Text).</p>
+
+      <h3 style="color: var(--navy); margin: 28px 0 12px;">11. APPLICABLE LAWS</h3>
+      <p>The contract and these terms are subject to the laws of the People's Republic of China, and comply with the 2026 Version of Group Travel Contract (Model Text) issued by the Ministry of Culture and Tourism and the State Administration for Market Regulation. You submit to the exclusive jurisdiction of the courts located in Beijing for the resolution of any dispute under these terms or concerning any tour or service.</p>
+      <p style="margin-top: 24px;">Qiyu China Travel (Beijing) reserves the right to interpret these Terms of Service. Any matters not covered herein shall be handled in accordance with the 2026 Version of Group Travel Contract (Model Text) and relevant national laws and regulations.</p>
+
+      <div style="margin-top: 48px; text-align: center;">
+        <button class="btn-outline" onclick="navigate('home', event)" style="border-color: var(--gold); color: var(--gold);">← Back to Home</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ===== MODALS ===== -->
@@ -3033,6 +3130,23 @@ function navigate(page, e, param = null) {
         state.currentView = 'city-detail';
         window.history.pushState({}, '', `#/city/${param}`);
     } 
+         // 专门处理 Terms of Service（不改变 hash，避免递归）
+    if (page === 'terms') {
+        const termsView = document.getElementById('view-terms');
+        if (termsView) {
+            // 隐藏所有视图
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            termsView.classList.add('active');
+            state.currentView = 'terms';
+            window.scrollTo(0, 0);
+            // 关键：不设置 window.location.hash，防止触发 hashchange 再次导航
+            // 直接返回，不再执行后续代码（包括后面的 hash 设置）
+            return;
+        } else {
+            console.error('view-terms 元素不存在，请检查 HTML');
+            return;
+        }
+    }
     else if (page === 'tour-detail' && param) {
     renderTourDetail(param);
     document.getElementById('view-tour-detail').classList.add('active');
@@ -6839,6 +6953,7 @@ function handleHash() {
             'all-cities': 'all-cities',
             'all-reviews': 'all-reviews',   // 新增
             'all-blogs': 'all-blogs',   // 新增
+            'terms': 'terms',      
         };
         const page = pageMap[hash] || 'home';
         if (state.currentView !== page) navigate(page);
