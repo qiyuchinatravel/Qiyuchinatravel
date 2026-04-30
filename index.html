@@ -3618,9 +3618,32 @@ function renderCityDetail(cityId) {
     if (!city) return;
     
     // 获取关联数据
-    const attractions = (city.attractionIds || []).map(id => DATA.attractions.find(a => a.id == id)).filter(Boolean);
-    const hotels = (city.hotelIds || []).map(id => DATA.hotels.find(h => h.id == id)).filter(Boolean);
-    const restaurants = (city.restaurantIds || []).map(id => DATA.restaurants.find(r => r.id == id)).filter(Boolean);
+    // 获取属于当前城市的景点（直接根据景点的 city 字段筛选）
+// 获取景点：优先使用 city.attractionIds，如果无效则用 city 字段筛选
+let attractions = [];
+if (city.attractionIds && city.attractionIds.length > 0) {
+    attractions = city.attractionIds.map(id => DATA.attractions.find(a => a.id == id)).filter(Boolean);
+}
+// 如果通过 ID 找不到任何景点，则改用城市名称筛选
+if (attractions.length === 0) {
+    attractions = DATA.attractions.filter(a => a.city && a.city.toLowerCase() === city.name.toLowerCase() && a.status === 'active');
+}
+   let hotels = [];
+if (city.hotelIds && city.hotelIds.length > 0) {
+    hotels = city.hotelIds.map(id => DATA.hotels.find(h => h.id == id)).filter(Boolean);
+}
+if (hotels.length === 0) {
+    hotels = DATA.hotels.filter(h => h.city && h.city.toLowerCase() === city.name.toLowerCase() && h.status === 'active');
+}
+    // 获取餐厅：优先使用 city.restaurantIds，如果无效则用 city 字段筛选
+let restaurants = [];
+if (city.restaurantIds && city.restaurantIds.length > 0) {
+    restaurants = city.restaurantIds.map(id => DATA.restaurants.find(r => r.id == id)).filter(Boolean);
+}
+// 如果通过 ID 找不到任何餐厅，则改用城市名称筛选
+if (restaurants.length === 0) {
+    restaurants = DATA.restaurants.filter(r => r.city && r.city.toLowerCase() === city.name.toLowerCase() && r.status === 'active');
+}
     const transports = (city.transportIds || []).map(id => DATA.transport.find(t => t.id == id)).filter(Boolean);
     const guides = (city.guideIds || []).map(id => DATA.guides.find(g => g.id == id)).filter(Boolean);
     
