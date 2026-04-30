@@ -3153,6 +3153,7 @@ function navigate(page, e, param = null) {
         document.getElementById('view-city-detail').classList.add('active');
         state.currentView = 'city-detail';
         window.history.pushState({}, '', `#/city/${param}`);
+        return;   // ← 添加这一行
     } 
          // 专门处理 Terms of Service（不改变 hash，避免递归）
     if (page === 'terms') {
@@ -3176,36 +3177,42 @@ function navigate(page, e, param = null) {
     document.getElementById('view-tour-detail').classList.add('active');
     state.currentView = 'tour-detail';
     window.history.pushState({}, '', `#/tour/${param}`);
+    return;   // ← 添加这一行
 }
 else if (page === 'blog-detail' && param) {
     renderBlogDetail(param);
     document.getElementById('view-blog-detail').classList.add('active');
     state.currentView = 'blog-detail';
     window.location.hash = `#/blog/${param}`;
+    return;   // ← 添加这一行
 }
 else if (page === 'all-tours') {
     renderAllTours();
     document.getElementById('view-all-tours').classList.add('active');
     state.currentView = 'all-tours';
     window.location.hash = '#/all-tours';
+    return;   // ← 添加这一行
 }
 else if (page === 'all-cities') {
     renderAllCities();
     document.getElementById('view-all-cities').classList.add('active');
     state.currentView = 'all-cities';
     window.location.hash = '#/all-cities';
+    return;   // ← 添加这一行
 }
 else if (page === 'all-reviews') {
     renderAllReviews();
     document.getElementById('view-all-reviews').classList.add('active');
     state.currentView = 'all-reviews';
     window.location.hash = '#/all-reviews';
+    return;   // ← 添加这一行
 }
 else if (page === 'all-blogs') {
     renderAllBlogs();
     document.getElementById('view-all-blogs').classList.add('active');
     state.currentView = 'all-blogs';
     window.location.hash = '#/all-blogs';
+    return;   // ← 添加这一行
 }
     else {
         const targetView = document.getElementById(`view-${page}`);
@@ -3545,7 +3552,7 @@ function renderTours(limit = null) {
 }
 
 function renderDestinations(limit = null) {
-   console.log('renderDestinations 执行，城市数量：', state.cities.length, state.cities[0]?.imageUrl?.substring(0, 50));
+    console.log('renderDestinations 执行，城市数量：', state.cities.length);
     const grid = document.getElementById('dest-grid');
     if (!grid) return;
     let activeCities = state.cities.filter(c => c.status === 'active');
@@ -3557,7 +3564,7 @@ function renderDestinations(limit = null) {
         return `
             <div class="dest-card" onclick="showCityDetail(${c.id})">
                 <img src="${c.imageUrl ? c.imageUrl : 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=500&q=80'}" 
-                     alt="${c.name}" loading="lazy" 
+                     alt="${c.name}" loading="lazy"
                      onerror="this.src='https://via.placeholder.com/500x320?text=No+Image'">
                 <div class="dest-overlay"></div>
                 <div class="dest-content">
@@ -5834,9 +5841,40 @@ function openAttractionModal(id) {
 
 function deleteAttraction(id) {
     if (!confirm('Delete this attraction?')) return;
+
+    // 查找要删除的景点
+    const attraction = DATA.attractions.find(a => a.id == id);
+    if (!attraction) return;
+
+    // 从所有城市中移除该景点的 ID
+    state.cities.forEach(city => {
+        if (city.attractionIds && city.attractionIds.includes(id)) {
+            city.attractionIds = city.attractionIds.filter(pid => pid != id);
+            // 更新 attractionsList
+            city.attractionsList = (city.attractionIds || [])
+                .map(aid => {
+                    const attr = DATA.attractions.find(a => a.id == aid);
+                    return attr ? attr.name : '';
+                })
+                .filter(n => n);
+        }
+    });
+
+    // 删除景点本身
     DATA.attractions = DATA.attractions.filter(a => a.id !== id);
+
+    // 刷新相关页面
     renderAttractionsTable();
+    renderCitiesTable();
+    if (state.currentView === 'home') {
+        renderDestinations();
+    } else {
+        window._needRefreshHome = true;
+    }
+
+    // 保存到 localStorage
     localStorage.setItem('qiyu_attractions', JSON.stringify(DATA.attractions));
+    localStorage.setItem('qiyu_cities', JSON.stringify(state.cities));
     showToast('Attraction deleted', 'info');
 }
 
@@ -6196,26 +6234,89 @@ function saveGenericItem() {
     let newItem = { name: name, description: description, image: image };
     
     if (type === 'attraction') {
-        newItem = {
-            id: editId ? parseInt(editId) : Date.now(),
-            name: name,
-            city: document.getElementById('item-city').value,
-            duration: parseInt(document.getElementById('item-duration').value) || 1,
-            price: parseInt(document.getElementById('item-price').value) || 0,
-            status: document.getElementById('item-status').value,
-            description: description,
-            imageUrl: document.getElementById('item-image-url-input').value || '',   // 新增
-            image: image
-        };
-        if (editId) {
-            const idx = DATA.attractions.findIndex(a => a.id == editId);
-            if (idx !== -1) DATA.attractions[idx] = newItem;
-        } else {
-            DATA.attractions.push(newItem);
+    // 记录旧的城市（如果是编辑模式）
+    let oldCityName = '';
+    let oldAttractionId = null;
+    if (editId) {
+        const oldItem = DATA.attractions.find(a => a.id == editId);
+        if (oldItem) {
+            oldCityName = oldItem.city || '';
+            oldAttractionId = oldItem.id;
         }
-        renderAttractionsTable();
-        localStorage.setItem('qiyu_attractions', JSON.stringify(DATA.attractions));
-    } 
+    }
+
+    // 构建新景点数据
+    const newCity = document.getElementById('item-city').value;
+    const newItem = {
+        id: editId ? parseInt(editId) : Date.now(),
+        name: name,
+        city: newCity,
+        duration: parseInt(document.getElementById('item-duration').value) || 1,
+        price: parseInt(document.getElementById('item-price').value) || 0,
+        status: document.getElementById('item-status').value,
+        description: description,
+        imageUrl: document.getElementById('item-image-url-input').value || '',
+        image: image
+    };
+
+    // 更新 DATA.attractions
+    if (editId) {
+        const idx = DATA.attractions.findIndex(a => a.id == editId);
+        if (idx !== -1) DATA.attractions[idx] = newItem;
+    } else {
+        DATA.attractions.push(newItem);
+    }
+
+    // ========== 新增：自动更新城市的 attractions 关联 ==========
+    // 1. 如果编辑且城市有变化，从旧城市中移除该景点
+    if (editId && oldCityName && oldCityName !== newCity) {
+        const oldCity = state.cities.find(c => c.name === oldCityName);
+        if (oldCity) {
+            // 移除 attractionIds
+            if (oldCity.attractionIds) {
+                oldCity.attractionIds = oldCity.attractionIds.filter(id => id != newItem.id);
+            }
+            // 更新 attractionsList（用于首页显示）
+            if (oldCity.attractionsList) {
+                oldCity.attractionsList = (oldCity.attractionIds || [])
+                    .map(id => {
+                        const attr = DATA.attractions.find(a => a.id == id);
+                        return attr ? attr.name : '';
+                    })
+                    .filter(n => n);
+            }
+        }
+    }
+
+    // 2. 找到新城市，添加景点 ID（如果不存在）
+    const targetCity = state.cities.find(c => c.name === newCity);
+    if (targetCity) {
+        if (!targetCity.attractionIds) targetCity.attractionIds = [];
+        if (!targetCity.attractionIds.includes(newItem.id)) {
+            targetCity.attractionIds.push(newItem.id);
+        }
+        // 更新 attractionsList（用于首页显示）
+        targetCity.attractionsList = (targetCity.attractionIds || [])
+            .map(id => {
+                const attr = DATA.attractions.find(a => a.id == id);
+                return attr ? attr.name : '';
+            })
+            .filter(n => n);
+    }
+    // ========== 关联更新结束 ==========
+
+    // 刷新表格和保存
+    renderAttractionsTable();
+    renderCitiesTable();      // 刷新城市表格（显示更新后的景点列表）
+    // 如果当前在首页，也需要刷新首页的城市卡片
+    if (state.currentView === 'home') {
+        renderDestinations();
+    } else {
+        window._needRefreshHome = true;
+    }
+    localStorage.setItem('qiyu_attractions', JSON.stringify(DATA.attractions));
+    localStorage.setItem('qiyu_cities', JSON.stringify(state.cities));
+}
     else if (type === 'hotel') {
         newItem = {
             id: editId ? parseInt(editId) : Date.now(),
