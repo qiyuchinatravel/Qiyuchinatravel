@@ -2733,39 +2733,63 @@ function mergeData(defaultData, savedData) {
 }
 // 页面加载时从 localStorage 恢复所有数据
 function loadAllDataFromLocalStorage() {
-   // 合并城市
-    const savedCities = localStorage.getItem('qiyu_cities');
-    state.cities = mergeData(DATA.cities, savedCities ? JSON.parse(savedCities) : null);
-    DATA.cities = JSON.parse(JSON.stringify(state.cities));
-
-    // 合并景点
+    // 加载景点
     const savedAttractions = localStorage.getItem('qiyu_attractions');
-    DATA.attractions = mergeData(DATA.attractions, savedAttractions ? JSON.parse(savedAttractions) : null);
+    if (savedAttractions) {
+        DATA.attractions = JSON.parse(savedAttractions);
+    } else {
+        DATA.attractions = [...DATA.attractions]; // 保持默认
+    }
 
-    // 合并酒店
+    // 加载城市
+    const savedCities = localStorage.getItem('qiyu_cities');
+    if (savedCities) {
+        state.cities = JSON.parse(savedCities);
+        DATA.cities = JSON.parse(JSON.stringify(state.cities));
+    } else {
+        state.cities = [...DATA.cities];
+    }
+
+    // 加载酒店
     const savedHotels = localStorage.getItem('qiyu_hotels');
-    DATA.hotels = mergeData(DATA.hotels, savedHotels ? JSON.parse(savedHotels) : null);
+    if (savedHotels) {
+        DATA.hotels = JSON.parse(savedHotels);
+    }
 
-    // 合并餐厅
+    // 加载餐厅
     const savedRestaurants = localStorage.getItem('qiyu_restaurants');
-    DATA.restaurants = mergeData(DATA.restaurants, savedRestaurants ? JSON.parse(savedRestaurants) : null);
+    if (savedRestaurants) {
+        DATA.restaurants = JSON.parse(savedRestaurants);
+    }
 
-    // 合并交通
+    // 加载交通
     const savedTransport = localStorage.getItem('qiyu_transport');
-    DATA.transport = mergeData(DATA.transport, savedTransport ? JSON.parse(savedTransport) : null);
+    if (savedTransport) {
+        DATA.transport = JSON.parse(savedTransport);
+    }
 
-    // 合并导游
+    // 加载导游
     const savedGuides = localStorage.getItem('qiyu_guides');
-    DATA.guides = mergeData(DATA.guides, savedGuides ? JSON.parse(savedGuides) : null);
+    if (savedGuides) {
+        DATA.guides = JSON.parse(savedGuides);
+    }
 
-    // 合并旅游团
+    // 加载旅游团
     const savedTours = localStorage.getItem('qiyu_tours');
-    state.tours = mergeData(DATA.tours, savedTours ? JSON.parse(savedTours) : null);
-    DATA.tours = JSON.parse(JSON.stringify(state.tours));
+    if (savedTours) {
+        state.tours = JSON.parse(savedTours);
+        DATA.tours = JSON.parse(JSON.stringify(state.tours));
+    } else {
+        state.tours = [...DATA.tours];
+    }
 
-    // 合并订单
+    // 加载订单
     const savedBookings = localStorage.getItem('qiyu_bookings');
-    state.bookings = savedBookings ? JSON.parse(savedBookings) : [...DATA.bookings];
+    if (savedBookings) {
+        state.bookings = JSON.parse(savedBookings);
+    } else {
+        state.bookings = [...DATA.bookings];
+    }
 }
 
 // 加载本地存储数据
@@ -4702,6 +4726,14 @@ function renderAdminTables() {
 function renderCitiesTable() {
   const t = document.getElementById('cities-table');
   if (!t) return;
+   // 按城市名称排序
+    const sortedCities = [...state.cities].sort((a, b) => {
+        const nameA = (a.name || '').toLowerCase();
+        const nameB = (b.name || '').toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+    });
   t.innerHTML = `
     <thead><tr>
       <th>Image</th><th>City Name</th><th>Province</th><th>Tagline</th>
@@ -4726,41 +4758,77 @@ function renderCitiesTable() {
 }
 
 function renderAttractionsTable() {
-    const t = document.getElementById('attractions-table');
-    if (!t) return;
-    t.innerHTML = `
-        <thead><tr><th>Attraction</th><th>City</th><th>Duration</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>${DATA.attractions.map(a => `
-            <tr>
-                <td><strong>${a.name}</strong></td>
-                <td>${a.city}</td>
+    try {
+        const t = document.getElementById('attractions-table');
+        if (!t) {
+            console.error('表格元素不存在');
+            return;
+        }
+        // 安全排序：按城市字母顺序
+        const sorted = [...DATA.attractions].sort((a, b) => {
+            const cityA = (a.city || '').toLowerCase();
+            const cityB = (b.city || '').toLowerCase();
+            if (cityA < cityB) return -1;
+            if (cityA > cityB) return 1;
+            return 0;
+        });
+        console.log('排序后景点数量：', sorted.length, sorted.map(s => s.city + ':' + s.name));
+        
+        let html = `<thead><tr><th>Attraction</th><th>City</th><th>Duration</th><th>Price</th><th>Status</th><th>Actions</th></thead><tbody>`;
+        for (let a of sorted) {
+            html += `<tr>
+                <td><strong>${safe(a.name)}</strong></td>
+                <td>${safe(a.city)}</td>
                 <td>${a.duration} hrs</td>
                 <td>$${a.price}</td>
                 <td><span class="status-badge status-${a.status}">${a.status}</span></td>
                 <td><div class="table-actions">
                     <button class="tbl-btn tbl-btn-edit" onclick="openAttractionModal(${a.id})">✏️ Edit</button>
-                    <button class="tbl-btn tbl-btn-del" onclick="deleteAttraction(${a.id})">🗑️</button>
+                    <button class="tbl-btn tbl-btn-del" onclick="deleteAttraction(${a.id})">🗑️ Delete</button>
                 </div></td>
-            </tr>
-        `).join('')}</tbody>
-    `;
+            </tr>`;
+        }
+        html += `</tbody>`;
+        t.innerHTML = html;
+    } catch (err) {
+        console.error('渲染景点表格时出错：', err);
+    }
+}
+
+// 辅助安全函数（避免XSS）
+function safe(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
 }
 
 function renderHotelsTable() {
     const t = document.getElementById('hotels-table');
     if (!t) return;
+    // 按城市排序
+    const sortedHotels = [...DATA.hotels].sort((a, b) => {
+        const cityA = (a.city || '').toLowerCase();
+        const cityB = (b.city || '').toLowerCase();
+        if (cityA < cityB) return -1;
+        if (cityA > cityB) return 1;
+        return 0;
+    });
     t.innerHTML = `
         <thead><tr><th>Hotel Name</th><th>City</th><th>Stars</th><th>Price/Night</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>${DATA.hotels.map(h => `
+        <tbody>${sortedHotels.map(h => `
             <tr>
-                <td><strong>${h.name}</strong></td>
-                <td>${h.city}</td>
+                <td><strong>${escapeHtml(h.name)}</strong></td>
+                <td>${escapeHtml(h.city)}</td>
                 <td>${'★'.repeat(h.stars)}</td>
                 <td>$${h.price}</td>
                 <td><span class="status-badge status-${h.status}">${h.status}</span></td>
                 <td><div class="table-actions">
                     <button class="tbl-btn tbl-btn-edit" onclick="openHotelModal(${h.id})">✏️ Edit</button>
-                    <button class="tbl-btn tbl-btn-del" onclick="deleteHotel(${h.id})">🗑️</button>
+                    <button class="tbl-btn tbl-btn-del" onclick="deleteHotel(${h.id})">🗑️ Delete</button>
                 </div></td>
             </tr>
         `).join('')}</tbody>
@@ -4770,18 +4838,26 @@ function renderHotelsTable() {
 function renderRestaurantsTable() {
     const t = document.getElementById('restaurants-table');
     if (!t) return;
+    // 按城市排序
+    const sortedRestaurants = [...DATA.restaurants].sort((a, b) => {
+        const cityA = (a.city || '').toLowerCase();
+        const cityB = (b.city || '').toLowerCase();
+        if (cityA < cityB) return -1;
+        if (cityA > cityB) return 1;
+        return 0;
+    });
     t.innerHTML = `
         <thead><tr><th>Restaurant</th><th>City</th><th>Cuisine</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>${DATA.restaurants.map(r => `
+        <tbody>${sortedRestaurants.map(r => `
             <tr>
-                <td><strong>${r.name}</strong></td>
-                <td>${r.city}</td>
-                <td>${r.cuisine}</td>
+                <td><strong>${escapeHtml(r.name)}</strong></td>
+                <td>${escapeHtml(r.city)}</td>
+                <td>${escapeHtml(r.cuisine)}</td>
                 <td>${r.price}</td>
                 <td><span class="status-badge status-${r.status}">${r.status}</span></td>
                 <td><div class="table-actions">
                     <button class="tbl-btn tbl-btn-edit" onclick="openRestaurantModal(${r.id})">✏️ Edit</button>
-                    <button class="tbl-btn tbl-btn-del" onclick="deleteRestaurant(${r.id})">🗑️</button>
+                    <button class="tbl-btn tbl-btn-del" onclick="deleteRestaurant(${r.id})">🗑️ Delete</button>
                 </div></td>
             </tr>
         `).join('')}</tbody>
@@ -4791,6 +4867,14 @@ function renderRestaurantsTable() {
 function renderTransportTable() {
     const t = document.getElementById('transport-table');
     if (!t) return;
+    // 按名称排序
+    const sortedTransport = [...DATA.transport].sort((a, b) => {
+        const nameA = (a.name || '').toLowerCase();
+        const nameB = (b.name || '').toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+    });
     t.innerHTML = `
         <thead><tr><th>Type</th><th>Capacity</th><th>Price</th><th>Unit</th><th>Actions</th></tr></thead>
         <tbody>${DATA.transport.map(tr => `
@@ -4811,6 +4895,14 @@ function renderTransportTable() {
 function renderGuidesTable() {
     const t = document.getElementById('guides-table');
     if (!t) return;
+     // 按语言排序（英语、法语、德语、西班牙语等）
+    const sortedGuides = [...DATA.guides].sort((a, b) => {
+        const langA = (a.lang || '').toLowerCase();
+        const langB = (b.lang || '').toLowerCase();
+        if (langA < langB) return -1;
+        if (langA > langB) return 1;
+        return 0;
+    });
     t.innerHTML = `
         <thead><tr><th>Guide Type</th><th>Language</th><th>Price/Day</th><th>Actions</th></tr></thead>
         <tbody>${DATA.guides.map(g => `
