@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QIYU China Travel - Your Gateway to Authentic China</title>
+<meta name="description" content="QIYU China Travel - Bespoke luxury journeys crafted for discerning travelers. Your gateway to authentic, unforgettable experiences in China.">
+<meta name="keywords" content="China travel, luxury tours, Beijing, Shanghai, Great Wall, custom tours">
+<meta name="author" content="QIYU China Travel">
+<meta property="og:title" content="QIYU China Travel - Authentic China Journeys">
+<meta property="og:description" content="Discover the soul of China with personalized luxury tours.">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/qiyuchinatravel/Qiyuchinatravel@main/images/qiyu-logo.png.png">
+<meta property="og:url" content="https://qiyuchinatravel.vercel.app/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1082,6 +1091,59 @@ footer {
 .terms-content ul {
   margin-left: 2rem;
   margin-bottom: 1rem;
+}
+
+/* 1. Tour 模态框内主体文字改为深色 */
+#tour-modal .modal-body,
+#tour-modal .lib-item-name,
+#tour-modal .lib-item-meta,
+#tour-modal .day-total span,
+#tour-modal .day-total strong,
+#tour-modal .dropped-item-name,
+#tour-modal .dropped-item-meta,
+#tour-modal .day-section-label,
+#tour-modal .cost-row span,
+#tour-modal .cost-row strong {
+    color: #1f2937 !important;
+}
+
+/* 2. 保留头部深色背景区域的文字为白色 */
+#tour-modal .day-header h3,
+#tour-modal .day-header span,
+#tour-modal .day-header input,
+#tour-modal .day-header select,
+#tour-modal .day-header button {
+    color: white !important;
+}
+
+/* 3. 城市下拉框单独设置背景为深灰色（不影响文字颜色，文字已在上面设为白色） */
+#tour-modal .day-header select {
+    background: #2d3748 !important;   /* 深灰色背景 */
+}
+
+/* 4. 下拉框选项背景和文字保持一致 */
+#tour-modal .day-header select option {
+    background: #2d3748 !important;
+    color: white !important;
+}
+
+/* 5. 确保模态框背景为白色 */
+#tour-modal .modal {
+    background: white;
+}
+
+.day-header.active-day {
+    background: var(--gold);
+    color: var(--navy);
+}
+.day-header.active-day .day-date,
+.day-header.active-day button {
+    color: var(--navy);
+}
+.day-header.active-day select,
+.day-header.active-day input {
+    background: rgba(0,0,0,0.2) !important;
+    color: white;
 }
 
 </style>
@@ -2336,6 +2398,8 @@ footer {
                     <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
                         <button class="canvas-btn canvas-btn-clear" type="button" onclick="clearTourItinerary()">🗑️ Clear All Days</button>
                         <button class="canvas-btn canvas-btn-sample" type="button" onclick="addTourDay()">+ Add New Day</button>
+                        <button class="canvas-btn canvas-btn-sample" type="button" onclick="copyTourItinerary()">📋 复制行程</button>
+                        <button class="canvas-btn canvas-btn-sample" type="button" onclick="copyFirstDayGuidesAndTransport()">📋 复制第一天导游和交通</button>
                     </div>
                     <div id="tour-days-container"></div>
                 </div>
@@ -2378,7 +2442,7 @@ footer {
   </div>
 </div>
 
-<!-- Blog Editor Modal -->
+<!-- ===== BLOG MODAL ===== -->
 <div class="modal-overlay" id="blog-modal">
   <div class="modal blog-editor-modal" style="max-width:900px">
     <div class="modal-header">
@@ -2386,8 +2450,11 @@ footer {
       <button class="modal-close" onclick="closeModal('blog-modal')">✕</button>
     </div>
     <div class="modal-body" id="blog-modal-body">
+
+      <!-- ========== 原有字段开始 ========== -->
       <div class="admin-form-grid">
-        <!-- Multilingual Title -->
+
+        <!-- 多语言标题 -->
         <div class="form-group full">
           <label>Title</label>
           <div class="lang-tabs" id="blog-title-tabs">
@@ -2397,27 +2464,37 @@ footer {
             <button class="lang-tab-btn" onclick="switchBlogLangTab('title','es',this)">ES</button>
             <button class="lang-tab-btn" onclick="switchBlogLangTab('title','zh',this)">中文</button>
           </div>
-          <div class="lang-tab-panel active" id="blog-title-en"><input type="text" id="blog-title-en-input" placeholder="Blog post title in English" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.9rem;outline:none"></div>
-          <div class="lang-tab-panel" id="blog-title-fr"><input type="text" id="blog-title-fr-input" placeholder="Titre en français" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.9rem;outline:none"></div>
-          <div class="lang-tab-panel" id="blog-title-de"><input type="text" id="blog-title-de-input" placeholder="Titel auf Deutsch" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.9rem;outline:none"></div>
-          <div class="lang-tab-panel" id="blog-title-es"><input type="text" id="blog-title-es-input" placeholder="Título en español" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.9rem;outline:none"></div>
-          <div class="lang-tab-panel" id="blog-title-zh"><input type="text" id="blog-title-zh-input" placeholder="中文标题" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.9rem;outline:none"></div>
+          <div class="lang-tab-panel active" id="blog-title-en">
+            <input type="text" id="blog-title-en-input" placeholder="Blog post title in English" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;">
+          </div>
+          <div class="lang-tab-panel" id="blog-title-fr">
+            <input type="text" id="blog-title-fr-input" placeholder="Titre en français" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;">
+          </div>
+          <div class="lang-tab-panel" id="blog-title-de">
+            <input type="text" id="blog-title-de-input" placeholder="Titel auf Deutsch" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;">
+          </div>
+          <div class="lang-tab-panel" id="blog-title-es">
+            <input type="text" id="blog-title-es-input" placeholder="Título en español" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;">
+          </div>
+          <div class="lang-tab-panel" id="blog-title-zh">
+            <input type="text" id="blog-title-zh-input" placeholder="中文标题" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;">
+          </div>
         </div>
 
-        <!-- Slug -->
+        <!-- Slug / URL -->
         <div class="form-group full">
           <label>Slug / URL</label>
-          <input type="text" id="blog-slug" placeholder="blog-post-url-slug" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.9rem;outline:none">
+          <input type="text" id="blog-slug" placeholder="blog-post-url-slug" style="width:100%;padding:10px 14px;border:1px solid var(--gray-200);border-radius:8px;">
         </div>
 
-        <!-- Featured Image -->
+        <!-- 特色图片 -->
         <div class="form-group">
           <label>Featured Image URL</label>
           <input type="text" id="blog-featured-img" placeholder="https://... (1200x675px recommended)" oninput="updateBlogImgPreview(this.value)">
           <div id="blog-img-preview" style="margin-top:8px;display:none"><img id="blog-img-preview-img" style="width:100%;height:120px;object-fit:cover;border-radius:6px" alt="Preview"></div>
         </div>
 
-        <!-- Category -->
+        <!-- 分类 -->
         <div class="form-group">
           <label>Category</label>
           <select id="blog-category">
@@ -2426,7 +2503,7 @@ footer {
           </select>
         </div>
 
-        <!-- Author & Date -->
+        <!-- 作者 & 日期 -->
         <div class="form-group">
           <label>Author</label>
           <input type="text" id="blog-author" placeholder="Author name">
@@ -2436,7 +2513,7 @@ footer {
           <input type="date" id="blog-date">
         </div>
 
-        <!-- Excerpt -->
+        <!-- 多语言摘要 -->
         <div class="form-group full">
           <label>Excerpt (Short Summary)</label>
           <div class="lang-tabs">
@@ -2446,16 +2523,26 @@ footer {
             <button class="lang-tab-btn" onclick="switchBlogLangTab('excerpt','es',this)">ES</button>
             <button class="lang-tab-btn" onclick="switchBlogLangTab('excerpt','zh',this)">中文</button>
           </div>
-          <div class="lang-tab-panel active" id="blog-excerpt-en"><textarea id="blog-excerpt-en-input" rows="3" placeholder="Short excerpt in English (150-200 chars)" oninput="updateCharCount(this,'blog-excerpt-en-count',200)" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none;resize:vertical"></textarea><div id="blog-excerpt-en-count" class="rte-char-count">0 / 200</div></div>
-          <div class="lang-tab-panel" id="blog-excerpt-fr"><textarea id="blog-excerpt-fr-input" rows="3" placeholder="Résumé en français" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none;resize:vertical"></textarea></div>
-          <div class="lang-tab-panel" id="blog-excerpt-de"><textarea id="blog-excerpt-de-input" rows="3" placeholder="Zusammenfassung auf Deutsch" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none;resize:vertical"></textarea></div>
-          <div class="lang-tab-panel" id="blog-excerpt-es"><textarea id="blog-excerpt-es-input" rows="3" placeholder="Resumen en español" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none;resize:vertical"></textarea></div>
-          <div class="lang-tab-panel" id="blog-excerpt-zh"><textarea id="blog-excerpt-zh-input" rows="3" placeholder="中文摘要" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;font-size:0.875rem;outline:none;resize:vertical"></textarea></div>
+          <div class="lang-tab-panel active" id="blog-excerpt-en">
+            <textarea id="blog-excerpt-en-input" rows="3" placeholder="Short excerpt in English (150-200 chars)" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;"></textarea>
+          </div>
+          <div class="lang-tab-panel" id="blog-excerpt-fr">
+            <textarea id="blog-excerpt-fr-input" rows="3" placeholder="Résumé en français" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;"></textarea>
+          </div>
+          <div class="lang-tab-panel" id="blog-excerpt-de">
+            <textarea id="blog-excerpt-de-input" rows="3" placeholder="Zusammenfassung auf Deutsch" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;"></textarea>
+          </div>
+          <div class="lang-tab-panel" id="blog-excerpt-es">
+            <textarea id="blog-excerpt-es-input" rows="3" placeholder="Resumen en español" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;"></textarea>
+          </div>
+          <div class="lang-tab-panel" id="blog-excerpt-zh">
+            <textarea id="blog-excerpt-zh-input" rows="3" placeholder="中文摘要" style="width:100%;padding:10px;border:1px solid var(--gray-200);border-radius:8px;"></textarea>
+          </div>
         </div>
 
-        <!-- Content Rich Text -->
+        <!-- 多语言内容（原有富文本框） -->
         <div class="form-group full">
-          <label>Content (Rich Text)</label>
+          <label>Content (Rich Text - Multilingual)</label>
           <div class="lang-tabs">
             <button class="lang-tab-btn active" onclick="switchBlogLangTab('content','en',this)">EN</button>
             <button class="lang-tab-btn" onclick="switchBlogLangTab('content','fr',this)">FR</button>
@@ -2463,14 +2550,24 @@ footer {
             <button class="lang-tab-btn" onclick="switchBlogLangTab('content','es',this)">ES</button>
             <button class="lang-tab-btn" onclick="switchBlogLangTab('content','zh',this)">中文</button>
           </div>
-          <div class="lang-tab-panel active" id="blog-content-en"><div class="rte-container" id="blog-content-en-rte"></div></div>
-          <div class="lang-tab-panel" id="blog-content-fr"><div class="rte-container" id="blog-content-fr-rte"></div></div>
-          <div class="lang-tab-panel" id="blog-content-de"><div class="rte-container" id="blog-content-de-rte"></div></div>
-          <div class="lang-tab-panel" id="blog-content-es"><div class="rte-container" id="blog-content-es-rte"></div></div>
-          <div class="lang-tab-panel" id="blog-content-zh"><div class="rte-container" id="blog-content-zh-rte"></div></div>
+          <div class="lang-tab-panel active" id="blog-content-en">
+            <div class="rte-container" id="blog-content-en-rte"></div>
+          </div>
+          <div class="lang-tab-panel" id="blog-content-fr">
+            <div class="rte-container" id="blog-content-fr-rte"></div>
+          </div>
+          <div class="lang-tab-panel" id="blog-content-de">
+            <div class="rte-container" id="blog-content-de-rte"></div>
+          </div>
+          <div class="lang-tab-panel" id="blog-content-es">
+            <div class="rte-container" id="blog-content-es-rte"></div>
+          </div>
+          <div class="lang-tab-panel" id="blog-content-zh">
+            <div class="rte-container" id="blog-content-zh-rte"></div>
+          </div>
         </div>
 
-        <!-- Tags -->
+        <!-- 标签 -->
         <div class="form-group full">
           <label>Tags</label>
           <div class="tag-input-container" id="tag-container" onclick="document.getElementById('tag-input-field').focus()">
@@ -2478,7 +2575,7 @@ footer {
           </div>
         </div>
 
-        <!-- SEO -->
+        <!-- SEO 设置 -->
         <div class="form-group">
           <label>Meta Title <span style="color:var(--gray-400);font-weight:400">(60 chars)</span></label>
           <input type="text" id="blog-meta-title" placeholder="SEO title" maxlength="60" oninput="updateCharCount(this,'blog-meta-title-count',60)">
@@ -2486,11 +2583,18 @@ footer {
         </div>
         <div class="form-group">
           <label>Meta Description <span style="color:var(--gray-400);font-weight:400">(160 chars)</span></label>
-          <textarea id="blog-meta-desc" rows="2" placeholder="SEO description" maxlength="160" oninput="updateCharCount(this,'blog-meta-desc-count',160)" style="resize:vertical"></textarea>
+          <textarea id="blog-meta-desc" rows="2" placeholder="SEO description" maxlength="160" oninput="updateCharCount(this,'blog-meta-desc-count',160)"></textarea>
           <div id="blog-meta-desc-count" class="rte-char-count" style="padding:2px 0">0 / 160</div>
         </div>
 
-        <!-- Status -->
+        <!-- ========== 新增：独立正文富文本框 ========== -->
+        <div class="form-group full">
+          <label>Blog Body (独立富文本框，不依赖语言)</label>
+          <div class="rte-container" id="blog-body-rte"></div>
+          <p style="font-size:0.75rem; color:var(--gray-400); margin-top:4px;">此内容独立于上方多语言内容，可根据需要在前台单独调用。</p>
+        </div>
+
+        <!-- 状态 -->
         <div class="form-group full">
           <label>Status</label>
           <div class="radio-group">
@@ -2499,12 +2603,13 @@ footer {
             <label class="radio-item"><input type="radio" name="blog-status" value="archived"> Archived</label>
           </div>
         </div>
-      </div>
-    </div>
+
+      </div> <!-- admin-form-grid 结束 -->
+    </div> <!-- modal-body 结束 -->
+
     <div class="modal-footer">
       <button class="modal-btn modal-btn-cancel" onclick="closeModal('blog-modal')">Cancel</button>
       <button class="modal-btn" style="background:var(--gray-200);color:var(--gray-700)" onclick="saveBlogPost('draft')">Save as Draft</button>
-      <button class="modal-btn" style="background:rgba(201,168,76,0.15);color:var(--gold-dark);border:1px solid var(--gold)" onclick="previewBlogPost()">👁️ Preview</button>
       <button class="modal-btn modal-btn-gold" onclick="saveBlogPost('published')">Publish</button>
     </div>
   </div>
@@ -2650,6 +2755,12 @@ footer {
 <button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
+let currentActiveTourDay = 0;   // 当前激活的天数索引
+    // ========== 新增：Tour 行程编排器所需的全局变量 ==========
+let tourItinerary = { days: [] };      // 存储当前编辑的行程数据
+let tourDragData = null;               // 左侧库拖拽时的项目数据
+let dragItemSource = null;             // 内部项目移动时的源数据
+// ============================================================
 // ============================================================
 // DATA
 // ============================================================
@@ -3133,6 +3244,7 @@ let state = {
   blogDeleteId: null,
   blogTags: []
 };
+
 
 // ============================================================
 // ROUTING
@@ -3788,6 +3900,50 @@ function renderTourDetail(tourId) {
                     ${tour.highlights.map(h => `<li style="padding: 8px 12px; background: var(--white); border-radius: 8px; border: 1px solid var(--gray-100); box-shadow: var(--shadow-sm);">✨ ${h}</li>`).join('')}
                 </ul>
             </div>
+
+        ${tour.itinerary && tour.itinerary.days && tour.itinerary.days.length ? `
+        <div style="margin-bottom: 40px;">
+            <h2 style="color: var(--navy); margin-bottom: 16px;">🗓️ Itinerary</h2>
+            <div class="tour-itinerary">
+                ${tour.itinerary.days.map((day, idx) => {
+                    let dayHtml = `<div style="background: var(--gray-50); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; border: 1px solid var(--gray-100);">
+                        <div style="background: var(--navy); color: white; padding: 12px 20px; font-weight: 600;">
+                            Day ${idx+1} ${day.date ? `– ${day.date}` : ''}
+                        </div>
+                        <div style="padding: 16px;">`;
+                    
+                    // 城市
+                    if (day.cities && day.cities.length) {
+                        dayHtml += `<div><strong>🏙️ Cities:</strong> ${day.cities.map(c => c.name).join(', ')}</div>`;
+                    }
+                     // 导游
+                    if (day.guides && day.guides.length) {
+                        dayHtml += `<div><strong>👨‍🏫 Guides:</strong> ${day.guides.map(g => g.name).join(', ')}</div>`;
+                    }
+                     // 交通
+                    if (day.transport && day.transport.length) {
+                        dayHtml += `<div><strong>🚗 Transport:</strong> ${day.transport.map(t => t.name).join(', ')}</div>`;
+                    }
+                    // 景点
+                    if (day.attractions && day.attractions.length) {
+                        dayHtml += `<div><strong>🏛️ Attractions:</strong> ${day.attractions.map(a => a.name).join(', ')}</div>`;
+                    }
+                     // 餐厅
+                    if (day.restaurants && day.restaurants.length) {
+                        dayHtml += `<div><strong>🍽️ Restaurants:</strong> ${day.restaurants.map(r => r.name).join(', ')}</div>`;
+                    }
+                    // 酒店
+                    if (day.hotels && day.hotels.length) {
+                        dayHtml += `<div><strong>🏨 Hotels:</strong> ${day.hotels.map(h => h.name).join(', ')}</div>`;
+                    }
+                    
+                    dayHtml += `</div></div>`;
+                    return dayHtml;
+                }).join('')}
+            </div>
+        </div>
+        ` : ''}
+
             <div style="display: flex; justify-content: center; gap: 20px; margin-top: 40px;">
                 <button class="btn-primary" onclick="navigate('customize', event)">✨ Customize This Tour</button>
                 <button class="btn-outline" onclick="navigate('inquiry', event)">📧 Request Quote</button>
@@ -4020,7 +4176,7 @@ function renderBlogDetail(blogId) {
     }
     const lang = state.currentLang;
     const title = blog.title[lang] || blog.title.en;
-    const content = blog.content[lang] || blog.content.en || '<p>No content available.</p>';
+    const content = blog.bodyHtml || blog.content[lang] || blog.content.en || '<p>No content available.</p>';
     const dateObj = new Date(blog.date);
     const dateStr = dateObj.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const featuredImage = blog.featuredImage;
@@ -6558,62 +6714,69 @@ function renderReviewsAdminTable() {
 }
 
 function openBlogModal(id) {
-  state.editingBlogId = id || null;
-  state.blogTags = [];
-  const post = id ? blogPosts.find(p => p.id === id) : null;
-  document.getElementById('blog-modal-title').textContent = post ? 'Edit Blog Post' : 'Create New Blog Post';
+    state.editingBlogId = id || null;
+    state.blogTags = [];
+    const post = id ? blogPosts.find(p => p.id === id) : null;
+    document.getElementById('blog-modal-title').textContent = post ? 'Edit Blog Post' : 'Create New Blog Post';
 
-  // Reset all fields
-  ['en','fr','de','es','zh'].forEach(lang => {
-    const titleInput = document.getElementById(`blog-title-${lang}-input`);
-    if (titleInput) titleInput.value = post ? (post.title[lang] || '') : '';
-    const excerptInput = document.getElementById(`blog-excerpt-${lang}-input`);
-    if (excerptInput) excerptInput.value = post ? (post.excerpt[lang] || '') : '';
-  });
-
-  document.getElementById('blog-slug').value = post ? post.slug : '';
-  document.getElementById('blog-featured-img').value = post ? post.featuredImage : '';
-  document.getElementById('blog-category').value = post ? post.category : 'Culture';
-  document.getElementById('blog-author').value = post ? post.author : '';
-  document.getElementById('blog-date').value = post ? post.date : new Date().toISOString().split('T')[0];
-  document.getElementById('blog-meta-title').value = post ? post.metaTitle : '';
-  document.getElementById('blog-meta-desc').value = post ? post.metaDescription : '';
-
-  // Status
-  const statusVal = post ? post.status : 'draft';
-  document.querySelectorAll('[name="blog-status"]').forEach(r => { r.checked = r.value === statusVal; });
-
-  // Tags
-  if (post && post.tags) {
-    state.blogTags = [...post.tags];
-    renderTags();
-  } else {
-    document.getElementById('tag-container').innerHTML = '<input type="text" id="tag-input-field" class="tag-input-field" placeholder="Type tag and press Enter..." onkeydown="handleTagInput(event)">';
-  }
-
-  // Image preview
-  updateBlogImgPreview(post ? post.featuredImage : '');
-
-  // Init RTEs for content
-  setTimeout(() => {
+    // 重置所有字段
     ['en','fr','de','es','zh'].forEach(lang => {
-      const rteId = `blog-content-${lang}-rte`;
-      const content = post ? (post.content[lang] || '') : '';
-      initRTE(rteId, content, `Blog content in ${lang === 'zh' ? 'Chinese' : lang.toUpperCase()}...`, 400);
+        const titleInput = document.getElementById(`blog-title-${lang}-input`);
+        if (titleInput) titleInput.value = post ? (post.title[lang] || '') : '';
+        const excerptInput = document.getElementById(`blog-excerpt-${lang}-input`);
+        if (excerptInput) excerptInput.value = post ? (post.excerpt[lang] || '') : '';
     });
-    initRTE('city-desc-rte', '', 'City description...');
-    initRTE('tour-desc-rte', '', 'Tour description...');
-  }, 100);
+    document.getElementById('blog-slug').value = post ? post.slug : '';
+    document.getElementById('blog-featured-img').value = post ? post.featuredImage : '';
+    document.getElementById('blog-category').value = post ? post.category : 'Culture';
+    document.getElementById('blog-author').value = post ? post.author : '';
+    document.getElementById('blog-date').value = post ? post.date : new Date().toISOString().split('T')[0];
+    document.getElementById('blog-meta-title').value = post ? post.metaTitle : '';
+    document.getElementById('blog-meta-desc').value = post ? post.metaDescription : '';
 
-  // Reset lang tabs
-  document.querySelectorAll('#blog-modal .lang-tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('#blog-modal .lang-tab-panel').forEach(panel => panel.classList.remove('active'));
-  const firstTitleTab = document.querySelector('#blog-title-tabs .lang-tab-btn');
-  if (firstTitleTab) firstTitleTab.classList.add('active');
-  const firstTitlePanel = document.getElementById('blog-title-en');
-  if (firstTitlePanel) firstTitlePanel.classList.add('active');
+    // 状态
+    const statusVal = post ? post.status : 'draft';
+    document.querySelectorAll('[name="blog-status"]').forEach(r => { r.checked = r.value === statusVal; });
 
-  openModal('blog-modal');
+    // Tags
+    if (post && post.tags) {
+        state.blogTags = [...post.tags];
+        renderTags();
+    } else {
+        document.getElementById('tag-container').innerHTML = '<input type="text" id="tag-input-field" class="tag-input-field" placeholder="Type tag and press Enter..." onkeydown="handleTagInput(event)">';
+    }
+
+    // 图片预览
+    updateBlogImgPreview(post ? post.featuredImage : '');
+
+    // 🔥 关键：初始化富文本编辑器，使用 setTimeout 确保 DOM 已渲染
+    setTimeout(() => {
+        ['en','fr','de','es','zh'].forEach(lang => {
+            const rteId = `blog-content-${lang}-rte`;
+            const content = post ? (post.content[lang] || '') : '';
+            // 如果已经初始化过，先清空容器再重新初始化
+            const container = document.getElementById(rteId);
+            if (container) {
+                // 移除原有内容，重新创建
+                container.innerHTML = '';
+                initRTE(rteId, content, `Blog content in ${lang === 'zh' ? 'Chinese' : lang.toUpperCase()}...`, 400);
+            }
+        });
+        // 可选：为其他模态框内的富文本也做一次
+        initRTE('city-desc-rte', '', 'City description...');
+        initRTE('tour-desc-rte', '', 'Tour description...');
+        initRTE('blog-body-rte', post ? (post.bodyHtml || '') : '', 'Write your blog content here...', 500);
+    }, 200);
+
+    // 重置语言标签页
+    document.querySelectorAll('#blog-modal .lang-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('#blog-modal .lang-tab-panel').forEach(panel => panel.classList.remove('active'));
+    const firstTitleTab = document.querySelector('#blog-title-tabs .lang-tab-btn');
+    if (firstTitleTab) firstTitleTab.classList.add('active');
+    const firstTitlePanel = document.getElementById('blog-title-en');
+    if (firstTitlePanel) firstTitlePanel.classList.add('active');
+
+    openModal('blog-modal');
 }
 
 function switchBlogLangTab(group, lang, el) {
@@ -6641,6 +6804,9 @@ function saveBlogPost(statusOverride) {
     const editor = document.querySelector(`#blog-content-${lang}-rte .rte-editor`);
     contentEditors[lang] = editor ? editor.innerHTML : '';
   });
+  // 获取独立富文本框内容
+   const bodyEditor = document.querySelector('#blog-body-rte .rte-editor');
+   const bodyHtml = bodyEditor ? bodyEditor.innerHTML : '';
 
   const postData = {
     id: state.editingBlogId || `blog-${Date.now()}`,
@@ -6667,7 +6833,8 @@ function saveBlogPost(statusOverride) {
     tags: [...state.blogTags],
     status: status,
     metaTitle: document.getElementById('blog-meta-title').value,
-    metaDescription: document.getElementById('blog-meta-desc').value
+    metaDescription: document.getElementById('blog-meta-desc').value,
+    bodyHtml: bodyHtml,   // 新增
   };
 
   if (state.editingBlogId) {
@@ -7237,9 +7404,22 @@ function getDefaultStartDate() {
 }
 
 function updateTourDayDate(dayIdx, newDate) {
-    // 如果 newDate 是空字符串，则设为 null
+    if (!tourItinerary.days[dayIdx]) return;
     tourItinerary.days[dayIdx].date = newDate ? newDate : null;
     renderTourDays();
+
+    // 如果修改的是第一天（索引为0），自动续填后面所有天的日期
+    if (dayIdx === 0 && newDate) {
+        let currentDate = new Date(newDate);
+        for (let i = 1; i < tourItinerary.days.length; i++) {
+            currentDate.setDate(currentDate.getDate() + 1);
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            tourItinerary.days[i].date = `${year}-${month}-${day}`;
+        }
+        renderTourDays();
+    }
     if (newDate) {
         showToast(`Day ${dayIdx+1} 日期已更新为 ${newDate}`, 'success');
     } else {
@@ -7250,14 +7430,113 @@ function updateTourDayDate(dayIdx, newDate) {
 function renderTourLibrary() {
     const container = document.getElementById('tour-lib-sidebar');
     if (!container) return;
-       const categories = [
-       { id: 'cities', label: '📍 Cities', items: DATA.cities.filter(c => c.status === 'active').map(c => ({ id: `city_${c.id}`, icon: '🏙️', name: c.name, meta: `Typical: ${c.days}-${c.days+1} days`, type: 'city', price: 0, data: c })) },
-       { id: 'guides', label: '👨‍🏫 Guides', items: DATA.guides.map(g => ({ id: `guide_${g.id}`, icon: g.icon, name: g.name, meta: `$${g.price}/${g.unit}`, type: 'guide', price: g.price, data: g })) },
-       { id: 'transport', label: '🚗 Transportation', items: DATA.transport.map(t => ({ id: `trans_${t.id}`, icon: t.icon, name: t.name, meta: `${t.capacity} · $${t.price}/${t.unit}`, type: 'transport', price: t.price, data: t })) },
-       { id: 'attractions', label: '🏛️ Attractions', items: DATA.attractions.filter(a => a.status === 'active').map(a => ({ id: `attr_${a.id}`, icon: '🏛️', name: a.name, meta: `${a.duration}hrs · $${a.price}`, type: 'attraction', price: a.price, data: a })) },
-       { id: 'restaurants', label: '🍽️ Restaurants', items: DATA.restaurants.filter(r => r.status === 'active').map(r => ({ id: `rest_${r.id}`, icon: '🍽️', name: r.name, meta: `${r.cuisine} · ${r.price}`, type: 'restaurant', price: r.price === '$$$' ? 120 : r.price === '$$' ? 60 : 30, data: r })) },
-       { id: 'hotels', label: '🏨 Hotels', items: DATA.hotels.filter(h => h.status === 'active').map(h => ({ id: `hotel_${h.id}`, icon: '🏨', name: h.name, meta: `${'★'.repeat(h.stars)} · $${h.price}/night`, type: 'hotel', price: h.price, data: h })) }
-   ];
+
+    // 获取当前激活天数的选中城市
+    let currentCity = null;
+    if (currentActiveTourDay !== null && tourItinerary.days[currentActiveTourDay]) {
+        currentCity = tourItinerary.days[currentActiveTourDay].city;
+    }
+    
+    // ========== 新增：生成提示条 ==========
+    let filterTip = '';
+    if (currentCity) {
+        filterTip = `<div style="background: var(--gold); color: var(--navy); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.8rem; font-weight: 600; text-align: center;">
+                        📍 当前过滤城市: ${currentCity}
+                    </div>`;
+    } else {
+        filterTip = `<div style="background: var(--gray-100); color: var(--gray-600); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.8rem; text-align: center;">
+                        点击天数头部或选择城市，将按城市过滤景点/餐厅/酒店
+                    </div>`;
+    }
+    // ===================================
+    // 景点：按城市过滤
+    let attractionItems = DATA.attractions.filter(a => a.status === 'active');
+    if (currentCity) {
+        attractionItems = attractionItems.filter(a => a.city && a.city.toLowerCase() === currentCity.toLowerCase());
+    }
+    attractionItems = attractionItems.sort((a,b) => (a.city || '').localeCompare(b.city || ''))
+        .map(a => ({
+            id: `attr_${a.id}`,
+            icon: '🏛️',
+            name: a.name,
+            meta: `${a.duration}hrs · $${a.price}`,
+            type: 'attraction',
+            price: a.price,
+            data: a
+        }));
+
+    // 餐厅：按城市过滤
+    let restaurantItems = DATA.restaurants.filter(r => r.status === 'active');
+    if (currentCity) {
+        restaurantItems = restaurantItems.filter(r => r.city && r.city.toLowerCase() === currentCity.toLowerCase());
+    }
+    restaurantItems = restaurantItems.sort((a,b) => (a.city || '').localeCompare(b.city || ''))
+        .map(r => ({
+            id: `rest_${r.id}`,
+            icon: '🍽️',
+            name: r.name,
+            meta: `${r.cuisine} · ${r.price}`,
+            type: 'restaurant',
+            price: r.price === '$$$' ? 120 : (r.price === '$$' ? 60 : 30),
+            data: r
+        }));
+
+    // 酒店：按城市过滤
+    let hotelItems = DATA.hotels.filter(h => h.status === 'active');
+    if (currentCity) {
+        hotelItems = hotelItems.filter(h => h.city && h.city.toLowerCase() === currentCity.toLowerCase());
+    }
+    hotelItems = hotelItems.sort((a,b) => (a.city || '').localeCompare(b.city || ''))
+        .map(h => ({
+            id: `hotel_${h.id}`,
+            icon: '🏨',
+            name: h.name,
+            meta: `${'★'.repeat(h.stars)} · $${h.price}/night`,
+            type: 'hotel',
+            price: h.price,
+            data: h
+        }));
+
+    // 城市、导游、交通不按城市过滤
+    const cityItems = DATA.cities.filter(c => c.status === 'active').map(c => ({
+        id: `city_${c.id}`,
+        icon: '🏙️',
+        name: c.name,
+        meta: `Typical: ${c.days}-${c.days+1} days`,
+        type: 'city',
+        price: 0,
+        data: c
+    }));
+
+    const guideItems = DATA.guides.map(g => ({
+        id: `guide_${g.id}`,
+        icon: g.icon,
+        name: g.name,
+        meta: `$${g.price}/${g.unit}`,
+        type: 'guide',
+        price: g.price,
+        data: g
+    }));
+
+    const transportItems = DATA.transport.map(t => ({
+        id: `trans_${t.id}`,
+        icon: t.icon,
+        name: t.name,
+        meta: `${t.capacity} · $${t.price}/${t.unit}`,
+        type: 'transport',
+        price: t.price,
+        data: t
+    }));
+
+    const categories = [
+        { id: 'cities', label: '📍 Cities', items: cityItems },
+        { id: 'guides', label: '👨‍🏫 Guides', items: guideItems },
+        { id: 'transport', label: '🚗 Transportation', items: transportItems },
+        { id: 'attractions', label: '🏛️ Attractions', items: attractionItems },
+        { id: 'restaurants', label: '🍽️ Restaurants', items: restaurantItems },
+        { id: 'hotels', label: '🏨 Hotels', items: hotelItems }
+    ];
+
     container.innerHTML = categories.map(cat => `
         <div class="lib-category">
             <div class="lib-cat-header" onclick="toggleTourCat('${cat.id}')">
@@ -7270,15 +7549,17 @@ function renderTourLibrary() {
                          ondragstart="onTourDragStart(event, ${JSON.stringify(item).replace(/"/g, '&quot;')})"
                          onclick="addItemToCurrentTourDay(${JSON.stringify(item).replace(/"/g, '&quot;')})">
                         <div class="lib-item-icon">${item.icon}</div>
-                        <div class="lib-item-info"><div class="lib-item-name">${item.name}</div><div class="lib-item-meta">${item.meta}</div></div>
+                        <div class="lib-item-info">
+                            <div class="lib-item-name">${item.name}</div>
+                            <div class="lib-item-meta">${item.meta}</div>
+                        </div>
                         <div class="lib-item-drag">⠿</div>
                     </div>
                 `).join('')}
             </div>
         </div>
     `).join('');
-    const firstCat = document.querySelector('#tour-lib-sidebar .lib-cat-body');
-    if(firstCat) firstCat.classList.add('open');
+
 }
 
 function toggleTourCat(id) {
@@ -7291,17 +7572,25 @@ function toggleTourCat(id) {
 }
 
 function onTourDragStart(e, item) {
-    tourDragData = item;
-    e.dataTransfer.effectAllowed = 'copy';
-    e.target.style.opacity = '0.5';
-    setTimeout(() => { if(e.target) e.target.style.opacity = '1'; }, 300);
+  tourDragData = item;
+  e.dataTransfer.effectAllowed = 'copy';
+  e.target.style.opacity = '0.5';
+  // 监听 dragend 事件清除数据
+  const cleanup = () => {
+    tourDragData = null;
+    e.target.removeEventListener('dragend', cleanup);
+  };
+  e.target.addEventListener('dragend', cleanup);
+  setTimeout(() => { if (e.target) e.target.style.opacity = '1'; }, 300);
 }
 
 function addItemToCurrentTourDay(item) {
-    if(tourItinerary.days.length === 0) addTourDay();
-    const lastIdx = tourItinerary.days.length - 1;
-    addItemToTourDay(lastIdx, item);
-    showToast(`Added ${item.name} to Day ${lastIdx+1}`, 'success');
+    if (tourItinerary.days.length === 0) addTourDay();
+    if (currentActiveTourDay === undefined || currentActiveTourDay >= tourItinerary.days.length) {
+        currentActiveTourDay = 0;
+    }
+    addItemToTourDay(currentActiveTourDay, item);
+    showToast(`Added ${item.name} to Day ${currentActiveTourDay + 1}`, 'success');
 }
 
 function addItemToTourDay(dayIdx, item) {
@@ -7341,15 +7630,24 @@ function removeTourItemFromDay(dayIdx, section, uid) {
 }
 
 function renderTourDays() {
+     // 动态更新全局城市列表（用于搜索输入框）
+    const cityDatalist = document.getElementById('city-search-list');
+    if (cityDatalist) {
+        cityDatalist.innerHTML = DATA.cities.filter(c => c.status === 'active')
+            .map(city => `<option value="${city.name}">${city.name}</option>`)
+            .join('');
+    }
     const container = document.getElementById('tour-days-container');
     if (!container) return;
     container.innerHTML = '';
+
     tourItinerary.days.forEach((day, dayIdx) => {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'day-block';
         dayDiv.setAttribute('data-day-idx', dayIdx);
         dayDiv.setAttribute('draggable', 'true');
-        
+
+        // 拖动排序事件
         dayDiv.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', dayIdx);
             e.dataTransfer.effectAllowed = 'move';
@@ -7365,58 +7663,161 @@ function renderTourDays() {
                 const moved = tourItinerary.days.splice(fromIdx, 1)[0];
                 tourItinerary.days.splice(toIdx, 0, moved);
                 renderTourDays();
+                if (typeof reorderTourDates === 'function') reorderTourDates();
+                reorderDatesAfterSort();   // ← 新增这一行
                 showToast('Day顺序已更新', 'info');
             }
         });
-        
+
+        // 计算当天总价
         let dayTotal = 0;
-        ['cities','attractions','hotels','restaurants','transport','guides'].forEach(s => {
+        ['cities', 'attractions', 'hotels', 'restaurants', 'transport', 'guides'].forEach(s => {
             (day[s] || []).forEach(i => dayTotal += (i.price || 0));
         });
-        
-        // 关键修改：始终显示日期选择器，值为 day.date 或空字符串
+
         const currentDate = day.date || '';
-        
+        const selectedCity = day.city || '';
+        const isActive = (currentActiveTourDay === dayIdx); // 高亮判断
+
+        // 构建HTML
         dayDiv.innerHTML = `
-            <div class="day-header">
-                <h3>📅 Day ${dayIdx+1}</h3>
+            <div class="day-header ${isActive ? 'active-day' : ''}" data-day-idx="${dayIdx}">
+                <h3>Day ${dayIdx + 1}</h3>
                 <div style="display: flex; gap: 16px; align-items: center;">
+                    <!-- 城市下拉菜单 -->
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">🏙️ 城市</span>
+                        <input type="text" id="day-city-${dayIdx}" class="tour-day-city" data-day="${dayIdx}" list="city-search-list"
+                        value="${selectedCity}"
+                        placeholder="搜索或选择城市"
+                        style="padding: 4px 8px; border-radius: 6px; border: none; font-size: 0.8rem; background: rgba(255,255,255,0.2); color: white; width: 140px;">
+                    </div>
+                    <!-- 日期选择器 -->
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">📆 日期</span>
-                        <input type="date" value="${currentDate}" 
-                               style="padding: 4px 8px; border-radius: 6px; border: none; font-size: 0.8rem; background: rgba(255,255,255,0.2); color: white;"
-                               onchange="updateTourDayDate(${dayIdx}, this.value)">
+                        <input type="date" value="${currentDate}"
+                            style="padding: 4px 8px; border-radius: 6px; border: none; font-size: 0.8rem; background: rgba(255,255,255,0.2); color: white;"
+                            onchange="updateTourDayDate(${dayIdx}, this.value)">
                     </div>
                     <button class="day-remove-btn" onclick="removeTourDay(${dayIdx})">✕</button>
                 </div>
             </div>
             <div class="day-body">
-                   ${renderTourDaySection(dayIdx, 'cities', '🏙️ City', 'Drop city here')}
-                   ${renderTourDaySection(dayIdx, 'guides', '👨‍🏫 Guide', 'Drop guide here')}
-                   ${renderTourDaySection(dayIdx, 'transport', '🚗 Transport', 'Drop transport here')}
-                   ${renderTourDaySection(dayIdx, 'attractions', '🏛️ Attractions', 'Drop attractions here')}
-                   ${renderTourDaySection(dayIdx, 'restaurants', '🍽️ Restaurants', 'Drop restaurants here')}
-                   ${renderTourDaySection(dayIdx, 'hotels', '🏨 Hotel', 'Drop hotel here')}
+        
+                ${renderTourDaySection(dayIdx, 'guides', '👨‍🏫 Guide', 'Drop guide here')}
+                ${renderTourDaySection(dayIdx, 'transport', '🚗 Transport', 'Drop transport here')}
+                ${renderTourDaySection(dayIdx, 'attractions', '🏛️ Attractions', 'Drop attractions here', day.city || '')}
+                ${renderTourDaySection(dayIdx, 'restaurants', '🍽️ Restaurants', 'Drop restaurants here', day.city || '')}
+                ${renderTourDaySection(dayIdx, 'hotels', '🏨 Hotel', 'Drop hotel here', day.city || '')}
                 <div class="day-total">
-                    <span>Day ${dayIdx+1} 总预算</span>
+                    <span>Day ${dayIdx + 1} 总预算</span>
                     <strong>$${dayTotal.toLocaleString()}</strong>
                 </div>
             </div>
         `;
+
         container.appendChild(dayDiv);
+
+        // 绑定城市下拉菜单 change 事件
+        const citySelect = document.getElementById(`day-city-${dayIdx}`);
+        if (citySelect) {
+            // 移除旧的监听器，避免重复绑定（可选）
+            citySelect.removeEventListener('change', citySelect._listener);
+            const changeHandler = (e) => {
+                const selectedCity = e.target.value;
+                tourItinerary.days[dayIdx].city = selectedCity;
+                currentActiveTourDay = dayIdx;
+                renderTourLibrary();
+                renderTourDays();
+                showToast(`Day ${dayIdx + 1} 城市已切换为 ${selectedCity || '未选择'}`, 'info');
+            };
+            citySelect.addEventListener('change', changeHandler);
+            citySelect._listener = changeHandler; // 保存以便移除
+        }
+
+        // 绑定点击Day头部激活该天
+        const dayHeader = dayDiv.querySelector('.day-header');
+        if (dayHeader) {
+            dayHeader.addEventListener('click', (e) => {
+                // 防止点击内部按钮/选择器时触发
+                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+                e.stopPropagation();
+                const clickedDayIdx = parseInt(dayHeader.getAttribute('data-day-idx'));
+                if (!isNaN(clickedDayIdx)) {
+                    currentActiveTourDay = clickedDayIdx;
+                    renderTourLibrary();
+                    renderTourDays();
+                    showToast(`Now editing Day ${clickedDayIdx + 1}`, 'info');
+                }
+            });
+        }
     });
-    
+
+    // 重新绑定 drop-zone 事件（避免重复绑定，先清除再添加）
     document.querySelectorAll('#tour-days-container .drop-zone').forEach(zone => {
-        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-        zone.addEventListener('drop', handleTourItemDrop);
+        // 移除旧监听器（避免累积）
+        zone.removeEventListener('dragover', zone._dragover);
+        zone.removeEventListener('dragleave', zone._dragleave);
+        zone.removeEventListener('drop', zone._drop);
+        
+        const dragoverHandler = (e) => { e.preventDefault(); zone.classList.add('drag-over'); };
+        const dragleaveHandler = () => zone.classList.remove('drag-over');
+        const dropHandler = handleTourItemDrop;
+        
+        zone.addEventListener('dragover', dragoverHandler);
+        zone.addEventListener('dragleave', dragleaveHandler);
+        zone.addEventListener('drop', dropHandler);
+        
+        zone._dragover = dragoverHandler;
+        zone._dragleave = dragleaveHandler;
+        zone._drop = dropHandler;
     });
 }
 
-function renderTourDaySection(dayIdx, section, label, placeholder) {
+// 重新计算所有天的日期（基于 startDate）
+function reorderTourDates() {
+    if (!tourItinerary.startDate) return;
+    let currentDate = new Date(tourItinerary.startDate);
+    tourItinerary.days.forEach((day, idx) => {
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const dayNum = String(currentDate.getDate()).padStart(2, '0');
+        day.date = `${year}-${month}-${dayNum}`;
+        currentDate.setDate(currentDate.getDate() + 1);
+    });
+    renderTourDays();
+}
+function reorderDatesAfterSort() {
+    // 找到新顺序下第一个有日期的天数
+    let baseDate = null;
+    for (let i = 0; i < tourItinerary.days.length; i++) {
+        if (tourItinerary.days[i].date) {
+            baseDate = tourItinerary.days[i].date;
+            break;
+        }
+    }
+    if (!baseDate) return; // 没有任何日期，无需重排
+
+    let currentDate = new Date(baseDate);
+    for (let i = 0; i < tourItinerary.days.length; i++) {
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        tourItinerary.days[i].date = `${year}-${month}-${day}`;
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    renderTourDays(); // 重新渲染以显示新日期
+}
+
+function renderTourDaySection(dayIdx, section, label, placeholder, cityName) {
     const items = tourItinerary.days[dayIdx][section] || [];
+    let displayLabel = label;
+    // 只有 attractions, restaurants, hotels 且 cityName 非空时才拼接
+    if (cityName && (section === 'attractions' || section === 'restaurants' || section === 'hotels')) {
+        displayLabel = label + ' (' + cityName + ')';
+    }
     return `
-        <div class="day-section-label">${label}</div>
+        <div class="day-section-label">${displayLabel}</div>
         <div class="drop-zone ${items.length > 0 ? 'has-items' : ''}" data-section="${section}" data-day="${dayIdx}">
             ${items.length === 0 ? `<span>${placeholder}</span>` : ''}
             ${items.map((item, idx) => `
@@ -7471,7 +7872,8 @@ document.addEventListener('drop', (e) => {
 });
 
 function getTourDayDate(dayIdx) { return `Day ${dayIdx+1}`; }
-function clearTourItinerary() { if(confirm('Clear all days?')) { tourItinerary.days = []; renderTourDays(); } }
+
+
 
 // 确保 itinerary 中的每一天都有 date 字段（如果没有则设为 null）
 function ensureDatesInItinerary(itinerary) {
@@ -7549,17 +7951,7 @@ window.openTourModal = function(id) {
     // 打开弹窗
     openModal('tour-modal');
     
-    // 延迟展开所有分类（确保弹窗已打开且 DOM 已渲染）
-    setTimeout(() => {
-        const sidebar = document.getElementById('tour-lib-sidebar');
-        if (sidebar) {
-            sidebar.querySelectorAll('.lib-cat-body').forEach(body => {
-                body.classList.add('open');
-                const toggle = body.previousElementSibling?.querySelector('.lib-cat-toggle');
-                if (toggle) toggle.textContent = '▲';
-            });
-        }
-    }, 150);
+  
 };
 
 // ==================== Tour行程编排器辅助函数补全 ====================
@@ -7568,6 +7960,39 @@ function filterTourLibrary(query) {
     document.querySelectorAll('#tour-lib-sidebar .lib-item').forEach(item => {
         item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
+}
+
+function copyFirstDayGuidesAndTransport() {
+    if (tourItinerary.days.length === 0) {
+        showToast('No days to copy from', 'error');
+        return;
+    }
+    const firstDay = tourItinerary.days[0];
+    const guidesToCopy = firstDay.guides ? [...firstDay.guides] : [];
+    const transportToCopy = firstDay.transport ? [...firstDay.transport] : [];
+    if (guidesToCopy.length === 0 && transportToCopy.length === 0) {
+        showToast('First day has no guides or transport to copy', 'info');
+        return;
+    }
+    // 从第二天开始复制
+    for (let i = 1; i < tourItinerary.days.length; i++) {
+        const day = tourItinerary.days[i];
+        if (guidesToCopy.length > 0) {
+            const existingGuideUids = new Set((day.guides || []).map(g => g.uid));
+            const newGuides = guidesToCopy.filter(g => !existingGuideUids.has(g.uid)).map(g => ({ ...g, uid: Date.now() + Math.random() }));
+            if (!day.guides) day.guides = [];
+            day.guides.push(...newGuides);
+        }
+        if (transportToCopy.length > 0) {
+            const existingTransportUids = new Set((day.transport || []).map(t => t.uid));
+            const newTransports = transportToCopy.filter(t => !existingTransportUids.has(t.uid)).map(t => ({ ...t, uid: Date.now() + Math.random() }));
+            if (!day.transport) day.transport = [];
+            day.transport.push(...newTransports);
+        }
+    }
+    renderTourDays();
+    updateCustomizerSummary();
+    showToast('已从第一天复制导游和交通到其他天数', 'success');
 }
 
 function clearTourItinerary() {
@@ -7584,63 +8009,72 @@ function onTourItemDragEnd(e) {
 }
 
 function handleTourItemDrop(e) {
-    e.preventDefault();
-    const targetZone = e.target.closest('.drop-zone');
-    if (!targetZone) return;
-    targetZone.classList.remove('drag-over');
+  e.preventDefault();
+  const targetZone = e.target.closest('.drop-zone');
+  if (!targetZone) return;
+  targetZone.classList.remove('drag-over');
 
-    if (!dragItemSource) return;
-
+  // 情况1：从左侧库拖拽新项目
+  if (tourDragData) {
     const targetDay = parseInt(targetZone.getAttribute('data-day'));
-    const targetSection = targetZone.getAttribute('data-section');
-
-    const source = dragItemSource;
-    const sourceDay = source.dayIdx;
-    const sourceSection = source.section;
-    const sourceUid = source.uid;
-
-    // 查找源项目
-    const sourceItem = tourItinerary.days[sourceDay][sourceSection].find(i => String(i.uid) === String(sourceUid));
-    if (!sourceItem) return;
-
-    // 跨天移动 或 跨section移动
-    if (sourceDay !== targetDay || sourceSection !== targetSection) {
-        // 从源位置删除
-        tourItinerary.days[sourceDay][sourceSection] = tourItinerary.days[sourceDay][sourceSection].filter(i => String(i.uid) !== String(sourceUid));
-        // 添加到目标位置
-        if (!tourItinerary.days[targetDay][targetSection]) tourItinerary.days[targetDay][targetSection] = [];
-        tourItinerary.days[targetDay][targetSection].push(sourceItem);
-        renderTourDays();
-        showToast(`Moved ${sourceItem.name} to Day ${targetDay+1}`, 'success');
-    } 
-    // 同一天同一 section 内重新排序
-    else if (sourceDay === targetDay && sourceSection === targetSection) {
-        // 获取鼠标相对于 drop-zone 内 dropped-item 的位置，确定插入索引
-        const items = Array.from(targetZone.querySelectorAll('.dropped-item:not(.dragging-placeholder)'));
-        let newIndex = items.length; // 默认末尾
-        for (let i = 0; i < items.length; i++) {
-            const rect = items[i].getBoundingClientRect();
-            const mouseY = e.clientY;
-            if (mouseY < rect.top + rect.height / 2) {
-                newIndex = i;
-                break;
-            }
-        }
-        // 如果拖拽的是自己且位置未变，不做处理
-        const oldIndex = source.index;
-        if (oldIndex === newIndex) {
-            dragItemSource = null;
-            return;
-        }
-        // 重新排序
-        const arr = tourItinerary.days[sourceDay][sourceSection];
-        const [moved] = arr.splice(oldIndex, 1);
-        arr.splice(newIndex > oldIndex ? newIndex - 1 : newIndex, 0, moved);
-        renderTourDays();
-        showToast(`Reordered ${sourceItem.name}`, 'info');
+    if (!isNaN(targetDay)) {
+      addItemToTourDay(targetDay, tourDragData);
+      showToast(`Added ${tourDragData.name} to Day ${targetDay + 1}`, 'success');
     }
+    tourDragData = null; // 清除拖拽数据
+    return;
+  }
 
+  // 情况2：内部项目移动（排序/跨天）
+  if (!dragItemSource) return;
+
+  const targetDay = parseInt(targetZone.getAttribute('data-day'));
+  const targetSection = targetZone.getAttribute('data-section');
+  const source = dragItemSource;
+  const sourceDay = source.dayIdx;
+  const sourceSection = source.section;
+  const sourceUid = source.uid;
+  const sourceIndex = source.index;
+
+  const sourceItem = tourItinerary.days[sourceDay][sourceSection].find(i => String(i.uid) === String(sourceUid));
+  if (!sourceItem) {
     dragItemSource = null;
+    return;
+  }
+
+  // 跨天移动（仅同类别）
+  if (sourceDay !== targetDay && sourceSection === targetSection) {
+    tourItinerary.days[sourceDay][sourceSection] = tourItinerary.days[sourceDay][sourceSection].filter(i => String(i.uid) !== String(sourceUid));
+    if (!tourItinerary.days[targetDay][targetSection]) tourItinerary.days[targetDay][targetSection] = [];
+    tourItinerary.days[targetDay][targetSection].push(sourceItem);
+    renderTourDays();
+    showToast(`Moved ${sourceItem.name} to Day ${targetDay + 1}`, 'success');
+  }
+  // 同一天同一区域内重新排序
+  else if (sourceDay === targetDay && sourceSection === targetSection) {
+    const items = tourItinerary.days[sourceDay][sourceSection];
+    const children = Array.from(targetZone.querySelectorAll('.dropped-item:not(.dragging-placeholder)'));
+    let newIndex = children.length;
+    for (let i = 0; i < children.length; i++) {
+      const rect = children[i].getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height / 2) {
+        newIndex = i;
+        break;
+      }
+    }
+    if (sourceIndex !== newIndex) {
+      const [moved] = items.splice(sourceIndex, 1);
+      items.splice(newIndex > sourceIndex ? newIndex - 1 : newIndex, 0, moved);
+      renderTourDays();
+      showToast('Item reordered', 'info');
+    }
+  }
+  // 跨类别移动（不允许）
+  else if (sourceSection !== targetSection) {
+    showToast('Cannot move item to a different category', 'info');
+  }
+
+  dragItemSource = null;
 }
 
 // ============================================================
@@ -8463,6 +8897,8 @@ function refreshCaptcha() {
 }
 
 </script>
+<datalist id="city-search-list"></datalist>
 </body>
 </html>
+
 
